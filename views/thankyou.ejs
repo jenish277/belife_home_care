@@ -1,0 +1,65 @@
+<!-- views/thankyou.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Optional: You can add a custom CSS file -->
+</head>
+<body>
+    <div class="thank-you-container">
+        <h1>Thank You for Your Order!</h1>
+        <p>Your task has been successfully added. Here are the details:</p>
+
+        <table>
+            <tr>
+                <th>Task Number:</th>
+                <td><%= task.no %></td>
+            </tr>
+            <tr>
+                <th>Date:</th>
+                <td><%= task.date %></td>
+            </tr>
+            <tr>
+                <th>Name:</th>
+                <td><%= task.name %></td>
+            </tr>
+            <tr>
+                <th>Phone Number:</th>
+                <td><%= task.number %></td>
+            </tr>
+            <tr>
+                <th>Address:</th>
+                <td><%= task.address %></td>
+            </tr>
+            <tr>
+                <th>Dish Wash:</th>
+                <td><%= task.dishWash %> (<%= task.dishQnt %> quantity)</td>
+            </tr>
+            <tr>
+                <th>Laundry Wash:</th>
+                <td><%= task.laundryWash %> (<%= task.laundryQnt %> quantity)</td>
+            </tr>
+            <tr>
+                <th>Floor Cleaner:</th>
+                <td><%= task.floorClener %> (<%= task.floorClenerQnt %> quantity)</td>
+            </tr>
+            <tr>
+                <th>Toilet Cleaner:</th>
+                <td><%= task.toiletClenerQnt %> quantity</td>
+            </tr>
+            <tr>
+                <th>Hand Wash:</th>
+                <td><%= task.handWash %> (<%= task.handWashQnt %> quantity)</td>
+            </tr>
+            <tr>
+                <th>Total Amount:</th>
+                <td><%= task.Total %> INR</td>
+            </tr>
+        </table>
+
+        <a href="/">Go Back to Home</a>
+    </div>
+</body>
+</html>
