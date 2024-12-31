@@ -6,6 +6,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thank You</title>
     <link rel="stylesheet" href="/styles.css"> <!-- Optional: You can add a custom CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .thank-you-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .thank-you-container h1 {
+            color: #4caf50;
+            font-size: 2em;
+        }
+
+        .thank-you-container p {
+            color: #555;
+            font-size: 1.2em;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+
+        table td {
+            background-color: #fafafa;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="thank-you-container">
@@ -34,24 +98,40 @@
                 <td><%= task.address %></td>
             </tr>
             <tr>
-                <th>Dish Wash:</th>
-                <td><%= task.dishWash %> (<%= task.dishQnt %> quantity)</td>
+                <th>Dish Wash (1000ML):</th>
+                <td><%= task.dishWash1000mlQnt %> quantity</td>
             </tr>
             <tr>
-                <th>Laundry Wash:</th>
-                <td><%= task.laundryWash %> (<%= task.laundryQnt %> quantity)</td>
+                <th>Dish Wash (5000ML):</th>
+                <td><%= task.dishWash5000mlQnt %> quantity</td>
             </tr>
             <tr>
-                <th>Floor Cleaner:</th>
-                <td><%= task.floorClener %> (<%= task.floorClenerQnt %> quantity)</td>
+                <th>Laundry Wash (1000ML):</th>
+                <td><%= task.laundryWash1000mlQnt %> quantity</td>
+            </tr>
+            <tr>
+                <th>Laundry Wash (5000ML):</th>
+                <td><%= task.laundryWash5000mlQnt %> quantity</td>
+            </tr>
+            <tr>
+                <th>Floor Cleaner (Rose):</th>
+                <td><%= task.floorCleanerRoseQnt %> quantity</td>
+            </tr>
+            <tr>
+                <th>Floor Cleaner (Jasmine):</th>
+                <td><%= task.floorCleanerJasmineQnt %> quantity</td>
             </tr>
             <tr>
                 <th>Toilet Cleaner:</th>
                 <td><%= task.toiletClenerQnt %> quantity</td>
             </tr>
             <tr>
-                <th>Hand Wash:</th>
-                <td><%= task.handWash %> (<%= task.handWashQnt %> quantity)</td>
+                <th>Hand Wash (Black Berry):</th>
+                <td><%= task.handWashBlackBerryQnt %> quantity</td>
+            </tr>
+            <tr>
+                <th>Hand Wash (Sandalwood):</th>
+                <td><%= task.handWashSandalwoodQnt %> quantity</td>
             </tr>
             <tr>
                 <th>Total Amount:</th>
