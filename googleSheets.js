@@ -31,12 +31,15 @@ async function appendToSheet(taskData) {
   ];
 
   try {
+    // Check if headers are already added to the sheet
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A1:Z1',
     });
 
     const rows = sheetData.data.values || [];
+
+    // If no headers exist or they don't match, add them
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
@@ -47,6 +50,7 @@ async function appendToSheet(taskData) {
       console.log('Headers added to the sheet.');
     }
 
+    // Prepare the data to append
     const resource = {
       values: [
         [
@@ -69,6 +73,7 @@ async function appendToSheet(taskData) {
       ],
     };
 
+    // Append data to the sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2',
