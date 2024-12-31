@@ -2,12 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const appendToSheet = require('./googleSheets'); // Import the Google Sheets function
+const path = require("path");
 const app = express();
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.set("views", path.join(__dirname, "views")); // Ensure correct path for views
+app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, "public"))); 
 
 // MongoDB Connection
 const dbURI = 'mongodb+srv://jenishrabadiya277:DlawQns07yu3RPQ1@jr-project.gtdgy.mongodb.net/?retryWrites=true&w=majority';
