@@ -29,6 +29,7 @@ async function appendToSheet(taskData) {
     'Laundry Wash 1000ml', 'Laundry Wash 5000ml',
     'Floor Cleaner Rose', 'Floor Cleaner Jasmine',
     'Toilet Cleaner', 'Hand Wash BlackBerry', 'Hand Wash Sandalwood',
+    'Bathroom Shiner Free', 'Copper Free', 'Final Free', // Added free item headers
     'Total',
   ];
 
@@ -36,20 +37,20 @@ async function appendToSheet(taskData) {
     // Check if headers are already added to the sheet
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A1:Z1',
+      range: 'Sheet1!A1:R1', // Updated range to include 18 columns
     });
 
     const rows = sheetData.data.values || [];
 
     // If no headers exist or they don't match, add them
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
-      await sheets.spreadsheets.values.append({
+      await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
         range: 'Sheet1!A1',
         valueInputOption: 'RAW',
         resource: { values: [headers] },
       });
-      console.log('Headers added to the sheet.');
+      console.log('Headers added/updated in the sheet.');
     }
 
     // Prepare the data to append
@@ -70,6 +71,9 @@ async function appendToSheet(taskData) {
           taskData.toiletCleanerQnt,
           taskData.handWashBlackBerryQnt,
           taskData.handWashSandalwoodQnt,
+          taskData.bathroomShinerFree ? 'Yes' : 'No', // Free item
+          taskData.copperFree ? 'Yes' : 'No', // Free item
+          taskData.finalFree ? 'Yes' : 'No', // Free item
           taskData.Total,
         ],
       ],
@@ -86,6 +90,7 @@ async function appendToSheet(taskData) {
     console.log('Data successfully appended to Google Sheets!');
   } catch (err) {
     console.error('Error appending data to Google Sheets:', err);
+    throw err; // Re-throw to handle in the calling function
   }
 }
 
