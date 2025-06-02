@@ -36,7 +36,7 @@ const taskSchema = new mongoose.Schema({
   
   // Floor Cleaner
   floorCleanerRoseQnt: { type: Number, default: 0 },
-  floorCleanerJasmineQnt: { type: Number, default: 0 },
+  floorCleanerJasmineFree: { type: Boolean, default: false },
   
   // Toilet Cleaner
   toiletCleanerQnt: { type: Number, default: 0 },
@@ -90,6 +90,7 @@ app.post("/addTask", async (req, res) => {
     const bathroomShinerFree = req.body.bathroomShinerFree === 'on';
     const copperFree = req.body.copperFree === 'on';
     const finalFree = req.body.finalFree === 'on';
+    const floorCleanerJasmineFree = req.body.floorCleanerJasmineFree === 'on';
 
     // Calculate Total (exclude free items)
     const total = 
@@ -98,7 +99,7 @@ app.post("/addTask", async (req, res) => {
       (laundryWash1000mlQnt * 120) +
       (laundryWash5000mlQnt * 580) +
       (floorCleanerRoseQnt * 99) +
-      (floorCleanerJasmineQnt * 99) +
+      (floorCleanerJasmineFree ? 0 : floorCleanerJasmineQnt * 99) +
       (toiletCleanerQnt * 60) +
       (handWashBlackBerryQnt * 120) +
       (handWashSandalwoodQnt * 120) +
