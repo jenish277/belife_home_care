@@ -1,4 +1,3 @@
-<!-- views/thankyou.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,15 +122,27 @@
             </tr>
             <tr>
                 <th>Toilet Cleaner:</th>
-                <td><%= task.toiletClenerQnt %> quantity</td>
+                <td><%= task.toiletCleanerQnt %> quantity</td>
             </tr>
             <tr>
-                <th>Hand Wash (Black Berry):</th>
+                <th>Hand Wash (BlackBerry):</th>
                 <td><%= task.handWashBlackBerryQnt %> quantity</td>
             </tr>
             <tr>
                 <th>Hand Wash (Sandalwood):</th>
                 <td><%= task.handWashSandalwoodQnt %> quantity</td>
+            </tr>
+            <tr>
+                <th>Bathroom Shiner (Free):</th>
+                <td><%= task.bathroomShinerFree ? 'Yes' : 'No' %></td>
+            </tr>
+            <tr>
+                <th>Copper (Free):</th>
+                <td><%= task.copperFree ? 'Yes' : 'No' %></td>
+            </tr>
+            <tr>
+                <th>Final (Free):</th>
+                <td><%= task.finalFree ? 'Yes' : 'No' %></td>
             </tr>
             <tr>
                 <th>Total Amount:</th>
