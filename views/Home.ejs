@@ -1,134 +1,141 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const appendToSheet = require('./googleSheets'); // Import the Google Sheets function
-const path = require("path");
-const app = express();
+<!DOCTYPE html>
+<html lang="en">
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.set("views", path.join(__dirname, "views")); // Ensure correct path for views
-app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "public"))); 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Order Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
 
-// MongoDB Connection
-const dbURI = 'mongodb+srv://jenishrabadiya277:DlawQns07yu3RPQ1@jr-project.gtdgy.mongodb.net/?retryWrites=true&w=majority';
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
+    .form-header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
 
-// Task Schema with Separate Fields
-const taskSchema = new mongoose.Schema({
-  no: { type: String, required: true },
-  date: { type: String, required: true },
-  name: { type: String, required: true },
-  number: { type: String, required: true },
-  address: { type: String, required: true },
-  
-  // Dish Wash
-  dishWash1000mlQnt: { type: Number, default: 0 },
-  dishWash5000mlQnt: { type: Number, default: 0 },
-  
-  // Laundry Wash
-  laundryWash1000mlQnt: { type: Number, default: 0 },
-  laundryWash5000mlQnt: { type: Number, default: 0 },
-  
-  // Floor Cleaner
-  floorCleanerRoseQnt: { type: Number, default: 0 },
-  floorCleanerJasmineQnt: { type: Number, default: 0 },
-  
-  // Toilet Cleaner
-  toiletCleanerQnt: { type: Number, default: 0 },
-  
-  // Hand Wash
-  handWashBlackBerryQnt: { type: Number, default: 0 },
-  handWashSandalwoodQnt: { type: Number, default: 0 },
-  
-  // Free Items (checkboxes)
-  bathroomShinerFree: { type: Boolean, default: false }, // Free Bathroom Shiner
-  copperFree: { type: Boolean, default: false }, // Free Copper
-  finalFree: { type: Boolean, default: false }, // Free Final
-  
-  // Total
-  Total: { type: Number, default: 0 },
-});
+    .btn-group button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
 
-const Task = mongoose.model("Task", taskSchema);
+<body>
+  <div class="container">
+    <h2 class="form-header">Product Order Form</h2>
+    <form action="/addTask" method="POST">
+      <!-- Personal Information Section -->
+      <div class="row mb-3">
+        <label for="name" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="number" class="col-sm-2 col-form-label">Phone Number</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="number" name="number" required>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="address" class="col-sm-2 col-form-label">Address</label>
+        <div class="col-sm-10">
+          <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+        </div>
+      </div>
 
-// Routes
-app.get("/", async (req, res) => {
-  res.render("Home.ejs");
-});
+      <!-- Product Selection Section -->
+      <h4 class="mt-4 mb-3">Product Details</h4>
+      <!-- Dish Wash -->
+      <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Dish Wash</label>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="dishWash1000mlQnt" name="dishWash1000mlQnt" placeholder="1000ML Quantity">
+        </div>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="dishWash5000mlQnt" name="dishWash5000mlQnt" placeholder="5000ML Quantity">
+        </div>
+      </div>
 
-app.post("/addTask", async (req, res) => {
-  try {
-    const taskCount = await Task.countDocuments();
-    const taskNumber = taskCount + 1;
-    const currentDate = new Date().toISOString().split("T")[0];
+      <!-- Laundry Wash -->
+      <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Laundry Wash</label>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="laundryWash1000mlQnt" name="laundryWash1000mlQnt" placeholder="1000ML Quantity">
+        </div>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="laundryWash5000mlQnt" name="laundryWash5000mlQnt" placeholder="5000ML Quantity">
+        </div>
+      </div>
 
-    // Parse quantities for existing fields
-    const dishWash1000mlQnt = parseInt(req.body.dishWash1000mlQnt) || 0;
-    const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
-    const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
-    const laundryWash5000mlQnt = parseInt(req.body.laundryWash5000mlQnt) || 0;
-    const floorCleanerRoseQnt = parseInt(req.body.floorCleanerRoseQnt) || 0;
-    const floorCleanerJasmineQnt = parseInt(req.body.floorCleanerJasmineQnt) || 0;
-    const toiletCleanerQnt = parseInt(req.body.toiletCleanerQnt) || 0;
-    const handWashBlackBerryQnt = parseInt(req.body.handWashBlackBerryQnt) || 0;
-    const handWashSandalwoodQnt = parseInt(req.body.handWashSandalwoodQnt) || 0;
+      <!-- Floor Cleaner -->
+      <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Floor Cleaner</label>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="floorCleanerRoseQnt" name="floorCleanerRoseQnt" placeholder="Rose Quantity">
+        </div>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="floorCleanerJasmineQnt" name="floorCleanerJasmineQnt" placeholder="Jasmine Quantity">
+        </div>
+      </div>
 
-    // Parse checkbox inputs for free items
-    const bathroomShinerFree = req.body.bathroomShinerFree === 'on';
-    const copperFree = req.body.copperFree === 'on';
-    const finalFree = req.body.finalFree === 'on';
+      <!-- Hand Wash -->
+      <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Hand Wash</label>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="handWashBlackBerryQnt" name="handWashBlackBerryQnt" placeholder="Black Berry Quantity">
+        </div>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="handWashSandalwoodQnt" name="handWashSandalwoodQnt" placeholder="Sandalwood Quantity">
+        </div>
+      </div>
+      
+      <!-- Toilet Cleaner -->
+      <div class="row mb-3">
+        <label for="toiletCleanerQnt" class="col-sm-2 col-form-label">Toilet Cleaner</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control" id="toiletCleanerQnt" name="toiletCleanerQnt" placeholder="Quantity">
+        </div>
+      </div>
 
-    // Calculate Total (excluding free items)
-    const total = 
-      (dishWash1000mlQnt * 60) + 
-      (dishWash5000mlQnt * 270) +
-      (laundryWash1000mlQnt * 120) +
-      (laundryWash5000mlQnt * 580) +
-      (floorCleanerRoseQnt * 99) +
-      (floorCleanerJasmineQnt * 99) +
-      (toiletCleanerQnt * 60) +
-      (handWashBlackBerryQnt * 120) +
-      (handWashSandalwoodQnt * 120);
+      <!-- Free Items Section -->
+      <h4 class="mt-4 mb-3">Free Items</h4>
+      <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Select Free Items</label>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="bathroomShinerFree" name="bathroomShinerFree">
+            <label class="form-check-label" for="bathroomShinerFree">
+              Bathroom Shiner (Free)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="copperFree" name="copperFree">
+            <label class="form-check-label" for="copperFree">
+              Copper (Free)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="finalFree" name="finalFree">
+            <label class="form-check-label" for="finalFree">
+              Final (Free)
+            </label>
+          </div>
+        </div>
+      </div>
 
-    const payload = {
-      no: taskNumber,
-      date: currentDate,
-      name: req.body.name,
-      number: req.body.number,
-      address: req.body.address,
-      dishWash1000mlQnt,
-      dishWash5000mlQnt,
-      laundryWash1000mlQnt,
-      laundryWash5000mlQnt,
-      floorCleanerRoseQnt,
-      floorCleanerJasmineQnt,
-      toiletCleanerQnt,
-      handWashBlackBerryQnt,
-      handWashSandalwoodQnt,
-      bathroomShinerFree, // Free item
-      copperFree, // Free item
-      finalFree, // Free item
-      Total: total,
-    };
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
 
-    const task = await Task.create(payload);
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
-    // Call function to append data to Google Sheets
-    await appendToSheet(payload); // Appends the task to Google Sheets
-
-    // Redirect to the Thank You page
-    res.render("thankyou.ejs", { task });
-  } catch (error) {
-    console.error("Error creating task:", error);
-    res.status(500).send("Error creating task");
-  }
-});
-
-// Start Server
-app.listen(5000, () => {
-  console.log('Server Connected on port: 5000');
-});
+</html>
