@@ -30,8 +30,9 @@ async function appendToSheet(taskData) {
     'Floor Cleaner Rose', 'Floor Cleaner Jasmine',
     'Toilet Cleaner', 'Hand Wash BlackBerry', 'Hand Wash Sandalwood',
     'Bathroom Shiner', 'Copper', 'Final',
-    'Bathroom Shiner Free', 'Copper Free', 'Final Free',
+    'Bathroom Shiner Free', 'Copper Free', 'Final Free', 'Floor Cleaner Jasmine Free',
     'Total',
+    
   ];
 
   try {
@@ -78,6 +79,7 @@ async function appendToSheet(taskData) {
           taskData.bathroomShinerFree ? 'Yes' : 'No',
           taskData.copperFree ? 'Yes' : 'No',
           taskData.finalFree ? 'Yes' : 'No',
+          taskData.floorCleanerJasmineFree ? 'Yes' : 'No'
           taskData.Total,
         ],
       ],
