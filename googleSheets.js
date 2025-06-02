@@ -6,7 +6,7 @@ const auth = new google.auth.GoogleAuth({
     type: process.env.TYPE,
     project_id: process.env.PROJECT_ID,
     private_key_id: process.env.PRIVATE_KEY_ID,
-    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), // Replace escaped newlines
+    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
     client_email: process.env.CLIENT_EMAIL,
     client_id: process.env.CLIENT_ID,
     auth_uri: process.env.AUTH_URI,
@@ -35,7 +35,7 @@ async function appendToSheet(taskData) {
   ];
 
   try {
-    // Check if headers are already added
+    // Check headers
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A1:U1',
@@ -43,7 +43,7 @@ async function appendToSheet(taskData) {
 
     const rows = sheetData.data.values || [];
 
-    // If no headers or they don't match, add them
+    // Update headers if necessary
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
@@ -54,7 +54,7 @@ async function appendToSheet(taskData) {
       console.log('Headers added/updated in the sheet.');
     }
 
-    // Prepare data to append
+    // Prepare data
     const resource = {
       values: [
         [
