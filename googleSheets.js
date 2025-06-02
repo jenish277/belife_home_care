@@ -20,7 +20,7 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: 'v4', auth });
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID; // Add this to your environment variables
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 async function appendToSheet(taskData) {
   const headers = [
@@ -29,20 +29,21 @@ async function appendToSheet(taskData) {
     'Laundry Wash 1000ml', 'Laundry Wash 5000ml',
     'Floor Cleaner Rose', 'Floor Cleaner Jasmine',
     'Toilet Cleaner', 'Hand Wash BlackBerry', 'Hand Wash Sandalwood',
-    'Bathroom Shiner Free', 'Copper Free', 'Final Free', // Added free item headers
+    'Bathroom Shiner', 'Copper', 'Final',
+    'Bathroom Shiner Free', 'Copper Free', 'Final Free',
     'Total',
   ];
 
   try {
-    // Check if headers are already added to the sheet
+    // Check if headers are already added
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A1:R1', // Updated range to include 18 columns
+      range: 'Sheet1!A1:U1',
     });
 
     const rows = sheetData.data.values || [];
 
-    // If no headers exist or they don't match, add them
+    // If no headers or they don't match, add them
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
@@ -53,7 +54,7 @@ async function appendToSheet(taskData) {
       console.log('Headers added/updated in the sheet.');
     }
 
-    // Prepare the data to append
+    // Prepare data to append
     const resource = {
       values: [
         [
@@ -71,15 +72,18 @@ async function appendToSheet(taskData) {
           taskData.toiletCleanerQnt,
           taskData.handWashBlackBerryQnt,
           taskData.handWashSandalwoodQnt,
-          taskData.bathroomShinerFree ? 'Yes' : 'No', // Free item
-          taskData.copperFree ? 'Yes' : 'No', // Free item
-          taskData.finalFree ? 'Yes' : 'No', // Free item
+          taskData.bathroomShinerQnt,
+          taskData.copperQnt,
+          taskData.finalQnt,
+          taskData.bathroomShinerFree ? 'Yes' : 'No',
+          taskData.copperFree ? 'Yes' : 'No',
+          taskData.finalFree ? 'Yes' : 'No',
           taskData.Total,
         ],
       ],
     };
 
-    // Append data to the sheet
+    // Append data
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2',
@@ -90,7 +94,7 @@ async function appendToSheet(taskData) {
     console.log('Data successfully appended to Google Sheets!');
   } catch (err) {
     console.error('Error appending data to Google Sheets:', err);
-    throw err; // Re-throw to handle in the calling function
+    throw err;
   }
 }
 
