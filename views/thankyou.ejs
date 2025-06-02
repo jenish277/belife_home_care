@@ -12,6 +12,7 @@
             margin: 0;
             padding: 20px;
         }
+
         .thank-you-container {
             background-color: #fff;
             padding: 30px;
@@ -21,31 +22,38 @@
             margin: 50px auto;
             text-align: center;
         }
+
         .thank-you-container h1 {
             color: #4caf50;
             font-size: 2em;
         }
+
         .thank-you-container p {
             color: #555;
             font-size: 1.2em;
         }
+
         table {
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
         }
+
         table th, table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
         table th {
             background-color: #f1f1f1;
             font-weight: bold;
         }
+
         table td {
             background-color: #fafafa;
         }
+
         a {
             display: inline-block;
             margin-top: 20px;
@@ -56,8 +64,18 @@
             border-radius: 5px;
             font-size: 1.1em;
         }
+
         a:hover {
             background-color: #0056b3;
+        }
+
+        .free-status {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .not-free-status {
+            color: #555;
         }
     </style>
 </head>
@@ -65,90 +83,103 @@
     <div class="thank-you-container">
         <h1>Thank You for Your Order!</h1>
         <p>Your task has been successfully added. Here are the details:</p>
+
         <table>
             <tr>
                 <th>Task Number:</th>
                 <td><%= task.no %></td>
+                <td></td>
             </tr>
             <tr>
                 <th>Date:</th>
                 <td><%= task.date %></td>
+                <td></td>
             </tr>
             <tr>
                 <th>Name:</th>
                 <td><%= task.name %></td>
+                <td></td>
             </tr>
             <tr>
                 <th>Phone Number:</th>
                 <td><%= task.number %></td>
+                <td></td>
             </tr>
             <tr>
                 <th>Address:</th>
                 <td><%= task.address %></td>
+                <td></td>
             </tr>
             <tr>
                 <th>Dish Wash (1000ML):</th>
                 <td><%= task.dishWash1000mlQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Dish Wash (5000ML):</th>
                 <td><%= task.dishWash5000mlQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Laundry Wash (1000ML):</th>
                 <td><%= task.laundryWash1000mlQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Laundry Wash (5000ML):</th>
                 <td><%= task.laundryWash5000mlQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Floor Cleaner (Rose):</th>
                 <td><%= task.floorCleanerRoseQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Floor Cleaner (Jasmine):</th>
                 <td><%= task.floorCleanerJasmineQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Toilet Cleaner:</th>
                 <td><%= task.toiletCleanerQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
-                <th>Hand Wash (BlackBerry):</th>
+                <th>Hand Wash (Black Berry):</th>
                 <td><%= task.handWashBlackBerryQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Hand Wash (Sandalwood):</th>
                 <td><%= task.handWashSandalwoodQnt %> quantity</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Bathroom Shiner:</th>
                 <td><%= task.bathroomShinerQnt %> quantity</td>
+                <td class="<%= task.bathroomShinerFree ? 'free-status' : 'not-free-status' %>">
+                    <%= task.bathroomShinerFree ? 'Free' : 'Not Free' %>
+                </td>
             </tr>
             <tr>
                 <th>Copper:</th>
                 <td><%= task.copperQnt %> quantity</td>
+                <td class="<%= task.copperFree ? 'free-status' : 'not-free-status' %>">
+                    <%= task.copperFree ? 'Free' : 'Not Free' %>
+                </td>
             </tr>
             <tr>
                 <th>Final:</th>
                 <td><%= task.finalQnt %> quantity</td>
-            </tr>
-            <tr>
-                <th>Bathroom Shiner (Free):</th>
-                <td><%= task.bathroomShinerFree ? 'Yes' : 'No' %></td>
-            </tr>
-            <tr>
-                <th>Copper (Free):</th>
-                <td><%= task.copperFree ? 'Yes' : 'No' %></td>
-            </tr>
-            <tr>
-                <th>Final (Free):</th>
-                <td><%= task.finalFree ? 'Yes' : 'No' %></td>
+                <td class="<%= task.finalFree ? 'free-status' : 'not-free-status' %>">
+                    <%= task.finalFree ? 'Free' : 'Not Free' %>
+                </td>
             </tr>
             <tr>
                 <th>Total Amount:</th>
                 <td><%= task.Total %> INR</td>
+                <td></td>
             </tr>
         </table>
         <a href="/">Go Back to Home</a>
