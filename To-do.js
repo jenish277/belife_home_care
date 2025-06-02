@@ -135,6 +135,86 @@ app.post("/addTask", async (req, res) => {
   }
 });
 
+app.get("/edit/:id", async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    res.render("EditOrder.ejs", { task });
+  } catch (error) {
+    console.error("Error retrieving task:", error);
+    res.status(500).send("Error retrieving task");
+  }
+});
+
+app.post("/update/:id", async (req, res) => {
+  try {
+    const dishWash1000mlQnt = parseInt(req.body.dishWash1000mlQnt) || 0;
+    const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
+    const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
+    const laundryWash5000mlQnt = parseInt(req.body.laundryWash5000mlQnt) || 0;
+    const floorCleanerRoseQnt = parseInt(req.body.floorCleanerRoseQnt) || 0;
+    const floorCleanerJasmineQnt = parseInt(req.body.floorCleanerJasmineQnt) || 0;
+    const toiletCleanerQnt = parseInt(req.body.toiletCleanerQnt) || 0;
+    const handWashBlackBerryQnt = parseInt(req.body.handWashBlackBerryQnt) || 0;
+    const handWashSandalwoodQnt = parseInt(req.body.handWashSandalwoodQnt) || 0;
+    const bathroomShinerQnt = parseInt(req.body.bathroomShinerQnt) || 0;
+    const copperQnt = parseInt(req.body.copperQnt) || 0;
+    const finalQnt = parseInt(req.body.finalQnt) || 0;
+    const bathroomShinerFree = req.body.bathroomShinerFree === 'on';
+    const copperFree = req.body.copperFree === 'on';
+    const finalFree = req.body.finalFree === 'on';
+
+    const total = 
+      (dishWash1000mlQnt * 60) + 
+      (dishWash5000mlQnt * 270) +
+      (laundryWash1000mlQnt * 120) +
+      (laundryWash5000mlQnt * 580) +
+      (floorCleanerRoseQnt * 99) +
+      (floorCleanerJasmineQnt * 99) +
+      (toiletCleanerQnt * 60) +
+      (handWashBlackBerryQnt * 120) +
+      (handWashSandalwoodQnt * 120) +
+      (bathroomShinerQnt * 80) +
+      (copperQnt * 60) +
+      (finalQnt * 80);
+
+    const payload = {
+      name: req.body.name,
+      number: req.body.number,
+      address: req.body.address,
+      dishWash1000mlQnt,
+      dishWash5000mlQnt,
+      laundryWash1000mlQnt,
+      laundryWash5000mlQnt,
+      floorCleanerRoseQnt,
+      floorCleanerJasmineQnt,
+      toiletCleanerQnt,
+      handWashBlackBerryQnt,
+      handWashSandalwoodQnt,
+      bathroomShinerQnt,
+      copperQnt,
+      finalQnt,
+      bathroomShinerFree,
+      copperFree,
+      finalFree,
+      Total: total,
+    };
+
+    try {
+      await appendToSheet(payload);
+      console.log('Data updated in Google Sheets, skipping MongoDB.');
+      res.render("thankyou.ejs", { task: payload });
+    } catch (err) {
+      console.error('Error updating Google Sheets, falling back to MongoDB:', err);
+      const updatedTask = await Task.findByIdAndUpdate(req.params.id, payload, { new: true });
+      console.log('Task updated in MongoDB.');
+      res.render("thankyou.ejs", { task });
+    }
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).send("Error updating task");
+  }
+});
+
 // Start Server
 app.listen(5000, () => {
   console.log('Server Connected on port: 5000');
