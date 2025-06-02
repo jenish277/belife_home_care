@@ -35,26 +35,26 @@ async function appendToSheet(taskData) {
   ];
 
   try {
-    // Check headers
+    // Check if headers are already added to the sheet
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A1:U1',
+      range: 'Sheet1!A1:Z1',
     });
 
     const rows = sheetData.data.values || [];
 
-    // Update headers if necessary
+    // If no headers exist or they don't match, add them
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
-      await sheets.spreadsheets.values.update({
+      await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
         range: 'Sheet1!A1',
         valueInputOption: 'RAW',
         resource: { values: [headers] },
       });
-      console.log('Headers added/updated in the sheet.');
+      console.log('Headers added to the sheet.');
     }
 
-    // Prepare data
+    // Prepare the data to append
     const resource = {
       values: [
         [
@@ -83,7 +83,7 @@ async function appendToSheet(taskData) {
       ],
     };
 
-    // Append data
+    // Append data to the sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2',
@@ -94,7 +94,6 @@ async function appendToSheet(taskData) {
     console.log('Data successfully appended to Google Sheets!');
   } catch (err) {
     console.error('Error appending data to Google Sheets:', err);
-    throw err;
   }
 }
 
