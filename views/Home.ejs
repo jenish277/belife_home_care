@@ -11,15 +11,10 @@
       background-color: #f8f9fa;
       padding: 20px;
     }
-
     .form-header {
       text-align: center;
       margin-bottom: 20px;
       color: #333;
-    }
-
-    .btn-group button {
-      margin-right: 5px;
     }
   </style>
 </head>
@@ -28,29 +23,28 @@
   <div class="container">
     <h2 class="form-header">Product Order Form</h2>
     <form action="/addTask" method="POST">
-      <!-- Personal Information Section -->
+      <!-- Personal Information -->
       <div class="row mb-3">
         <label for="name" class="col-sm-2 col-form-label">Name</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="name" name="25" maxlength="25" placeholder="Enter Your Name" required>
+          <input type="text" class="form-control" id="name" name="name" maxlength="25" placeholder="Enter Your Name" required>
         </div>
       </div>
       <div class="row mb-3">
         <label for="number" class="col-sm-2 col-form-label">Phone Number</label>
         <div class="col-sm-10">
-          <input type="number" class="form-control" id="number" name="phone" maxlength="10" placeholder="Enter Your Phone Number" required>
+          <input type="number" class="form-control" id="number" name="number" maxlength="10" placeholder="Enter Your Phone Number" required>
         </div>
       </div>
       <div class="row mb-3">
         <label for="address" class="col-sm-2 col-form-label">Address</label>
         <div class="col-sm-10">
-          <textarea class="form-control" id="address" name="address" rows="2" maxlength="Enter Your Address" placeholder="100" required></textarea>
+          <textarea class="form-control" id="address" name="address" rows="2" maxlength="100" placeholder="Enter Your Address" required></textarea>
         </div>
       </div>
 
-      <!-- Product Selection Section -->
+      <!-- Product Selection -->
       <h4 class="mt-4 mb-3">Product Details</h4>
-      <!-- Dish Wash -->
       <div class="row mb-3">
         <label class="col-sm-2 col-form-label">Dish Wash</label>
         <div class="col-sm-5">
@@ -60,10 +54,8 @@
           <input type="number" class="form-control" id="dishWash5000mlQnt" name="dishWash5000mlQnt" placeholder="5000ML Quantity" min="0">
         </div>
       </div>
-
-      <!-- Laundry Wash -->
       <div class="row mb-3">
-        <label for="laundryWash" class="col-sm-2 col-form-label">Laundry Wash</label>
+        <label class="col-sm-2 col-form-label">Laundry Wash</label>
         <div class="col-sm-5">
           <input type="number" class="form-control" id="laundryWash1000mlQnt" name="laundryWash1000mlQnt" placeholder="1000ML Quantity" min="0">
         </div>
@@ -71,82 +63,70 @@
           <input type="number" class="form-control" id="laundryWash5000mlQnt" name="laundryWash5000mlQnt" placeholder="5000ML Quantity" min="0">
         </div>
       </div>
-
-      <!-- Floor Cleaner -->
       <div class="row mb-3">
         <label class="col-sm-2 col-form-label">Floor Cleaner</label>
         <div class="col-sm-5">
-          <input type="number" class="form-control" id="flrRoseQnt" name="flrRose" placeholder="Rose Quantity" min="0">
+          <input type="number" class="form-control" id="floorCleanerRoseQnt" name="floorCleanerRoseQnt" placeholder="Rose Quantity" min="0">
         </div>
         <div class="col-sm-5">
-          <input type="number" class="form-control" id="flrJasmineQnt" name="flrJQ" placeholder="Jasmine Quantity" min="0">
+          <input type="number" class="form-control" id="floorCleanerJasmineQnt" name="floorCleanerJasmineQnt" placeholder="Jasmine Quantity" min="0">
         </div>
       </div>
-
-      <!-- Hand Wash -->
       <div class="row mb-3">
-        <label for="Hand Wash" class="col-sm-2 col-form-label">Hand Wash</label>
+        <label class="col-sm-2 col-form-label">Hand Wash</label>
         <div class="col-sm-5">
-          <input type="number" class="form-control" id="handWashBlackBerryQnt" name="handWashBlackBerryQnt" placeholder="Black Berry Quantity" min="0">
+          <input type="number" class="form-control" id="handWashBlackBerryQnt" name="handWashBlackBerryQnt" placeholder="BlackBerry Quantity" min="0">
         </div>
         <div class="col-sm-5">
           <input type="number" class="form-control" id="handWashSandalwoodQnt" name="handWashSandalwoodQnt" placeholder="Sandalwood Quantity" min="0">
         </div>
-      <!-- Toilet Cleaner -->
+      </div>
       <div class="row mb-3">
-        <label for="toiletCleanerQnt" class="col-sm-2 col-form-label">Toilet Cleaner</label>
+        <label class="col-sm-2 col-form-label">Toilet Cleaner</label>
         <div class="col-sm-10">
           <input type="number" class="form-control" id="toiletCleanerQnt" name="toiletCleanerQnt" placeholder="Quantity" min="0">
         </div>
       </div>
-
-      <!-- Bathroom Shiner, Copper, Final Quantities -->
       <div class="row mb-3">
-        <label for="bathroomShinerQnt" class="col-sm-2 col-form-label">Bathroom Shiner</label>
+        <label class="col-sm-2 col-form-label">Bathroom Shiner</label>
         <div class="col-sm-10">
           <input type="number" class="form-control" id="bathroomShinerQnt" name="bathroomShinerQnt" placeholder="Quantity" min="0">
         </div>
       </div>
       <div class="row mb-3">
-        <label for="copperQnt" class="col-sm-2 col-form-label">Copper</label>
+        <label class="col-sm-2 col-form-label">Copper</label>
         <div class="col-sm-10">
           <input type="number" class="form-control" id="copperQnt" name="copperQnt" placeholder="Quantity" min="0">
         </div>
       </div>
       <div class="row mb-3">
-        <label for="finalQnt" class="col-sm-2 col-form-label">Final</label>
+        <label class="col-sm-2 col-form-label">Final</label>
         <div class="col-sm-10">
           <input type="number" class="form-control" id="finalQnt" name="finalQnt" placeholder="Quantity" min="0">
         </div>
       </div>
 
-      <!-- Free Items Section -->
+      <!-- Free Items -->
       <h4 class="mt-4 mb-3">Free Items</h4>
       <div class="row mb-3">
         <label class="col-sm-2 col-form-label">Select Free Items</label>
         <div class="col-sm-10">
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="bathroomShinerFree" name="bathroomShinerFree">
-            <label class="form-check-label" for="bathroomShinerFree">
-              Bathroom Shiner (Free)
-            </label>
+            <input class="form-check-input" type="checkbox" id="bathroomShinerFree" name="bathroomShinerFree">
+            <label class="form-check-label" for="bathroomShinerFree">Bathroom Shiner (Free)</label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="copperFree" name="copperFree">
-            <label class="form-check-label" for="copperFree">
-              Copper (Free)
-            </label>
+            <label class="form-check-label" for="copperFree">Copper (Free)</label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="finalFree" name="finalFree">
-            <label class="form-check-label" for="finalFree">
-              Final (Free)
-            </label>
+            <label class="form-check-label" for="finalFree">Final (Free)</label>
           </div>
         </div>
       </div>
 
-      <!-- Submit Button -->
+      <!-- Submit -->
       <div class="text-center">
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
