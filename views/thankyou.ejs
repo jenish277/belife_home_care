@@ -135,11 +135,7 @@
                 <td><%= task.floorCleanerRoseQnt %> quantity</td>
                 <td></td>
             </tr>
-            <tr>
-                <th>Floor Cleaner (Jasmine):</th>
-                <td><%= task.floorCleanerJasmineQnt %> quantity</td>
-                <td></td>
-            </tr>
+<tr><th>Floor Cleaner (Jasmine):</th><td><%= task.floorCleanerJasmineQnt %> quantity</td><td class="<%= task.floorCleanerJasmineFree ? 'free-status' : 'not-free-status' %>"><%= task.floorCleanerJasmineFree ? 'Free' : 'Not Free' %></td></tr>
             <tr>
                 <th>Toilet Cleaner:</th>
                 <td><%= task.toiletCleanerQnt %> quantity</td>
