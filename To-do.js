@@ -34,12 +34,12 @@ const taskSchema = new mongoose.Schema({
   toiletCleanerQnt: { type: Number, default: 0 },
   handWashBlackBerryQnt: { type: Number, default: 0 },
   handWashSandalwoodQnt: { type: Number, default: 0 },
-  bathroomShinerQnt: { type: Number, default: 0 }, // Quantity
-  copperQnt: { type: Number, default: 0 }, // Quantity
-  finalQnt: { type: Number, default: 0 }, // Quantity
-  bathroomShinerFree: { type: Boolean, default: false }, // Free
-  copperFree: { type: Boolean, default: false }, // Free
-  finalFree: { type: Boolean, default: false }, // Free
+  bathroomShinerQnt: { type: Number, default: 0 },
+  copperQnt: { type: Number, default: 0 },
+  finalQnt: { type: Number, default: 0 },
+  bathroomShinerFree: { type: Boolean, default: false },
+  copperFree: { type: Boolean, default: false },
+  finalFree: { type: Boolean, default: false },
   Total: { type: Number, default: 0 },
 });
 
@@ -52,8 +52,7 @@ app.get("/", async (req, res) => {
 
 app.post("/addTask", async (req, res) => {
   try {
-    const taskCount = await Task.countDocuments();
-    const taskNumber = taskCount + 1;
+    const taskNumber = Math.floor(1000 + Math.random() * 9000).toString(); // Random 4-digit number
     const currentDate = new Date().toISOString().split("T")[0];
 
     // Parse quantities
@@ -61,8 +60,8 @@ app.post("/addTask", async (req, res) => {
     const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
     const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
     const laundryWash5000mlQnt = parseInt(req.body.laundryWash5000mlQnt) || 0;
-    const floorCleanerRoseQnt = parseInt(req.body.flrRoseQnt) || 0;
-    const floorCleanerJasmineQnt = parseInt(req.body.flrJasmineQnt) || 0;
+    const floorCleanerRoseQnt = parseInt(req.body.floorCleanerRoseQnt) || 0;
+    const floorCleanerJasmineQnt = parseInt(req.body.floorCleanerJasmineQnt) || 0;
     const toiletCleanerQnt = parseInt(req.body.toiletCleanerQnt) || 0;
     const handWashBlackBerryQnt = parseInt(req.body.handWashBlackBerryQnt) || 0;
     const handWashSandalwoodQnt = parseInt(req.body.handWashSandalwoodQnt) || 0;
@@ -114,16 +113,25 @@ app.post("/addTask", async (req, res) => {
       Total: total,
     };
 
-    const task = await Task.create(payload);
-
-    // Append to Google Sheets
+    // Try appending to Google Sheets first
     await appendToSheet(payload);
+    console.log('Data appended to Google Sheets, skipping MongoDB.');
 
-    // Render thank you page
-    res.render("thankyou.ejs", { task });
+    // Render thank you page with payload (no MongoDB task ID)
+    res.render("thankyou.ejs", { task: payload });
   } catch (error) {
-    console.error("Error creating task:", error);
-    res.status(500).send("Error creating task");
+    console.error('Error appending to Google Sheets, falling back to MongoDB:', error);
+    try {
+      // Fallback to MongoDB if Google Sheets fails
+      const taskCount = await Task.countDocuments();
+      payload.no = (taskCount + 1).toString(); // Override random number with sequential
+      const task = await Task.create(payload);
+      console.log('Data saved to MongoDB as fallback.');
+      res.render("thankyou.ejs", { task });
+    } catch (mongoError) {
+      console.error("Error creating task in MongoDB:", mongoError);
+      res.status(500).send("Error processing task");
+    }
   }
 });
 
