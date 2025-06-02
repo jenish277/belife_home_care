@@ -44,6 +44,11 @@ const taskSchema = new mongoose.Schema({
   handWashBlackBerryQnt: { type: Number, default: 0 },
   handWashSandalwoodQnt: { type: Number, default: 0 },
   
+  // New Fields
+  bathroomShinerQnt: { type: Number, default: 0 }, // Bathroom Shiner
+  copperQnt: { type: Number, default: 0 }, // Copper
+  finalQnt: { type: Number, default: 0 }, // Final
+  
   // Total
   Total: { type: Number, default: 0 },
 });
@@ -61,7 +66,7 @@ app.post("/addTask", async (req, res) => {
     const taskNumber = taskCount + 1;
     const currentDate = new Date().toISOString().split("T")[0];
 
-    // Calculate Total
+    // Parse quantities for existing fields
     const dishWash1000mlQnt = parseInt(req.body.dishWash1000mlQnt) || 0;
     const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
     const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
@@ -71,7 +76,13 @@ app.post("/addTask", async (req, res) => {
     const toiletCleanerQnt = parseInt(req.body.toiletCleanerQnt) || 0;
     const handWashBlackBerryQnt = parseInt(req.body.handWashBlackBerryQnt) || 0;
     const handWashSandalwoodQnt = parseInt(req.body.handWashSandalwoodQnt) || 0;
+    
+    // Parse quantities for new fields
+    const bathroomShinerQnt = parseInt(req.body.bathroomShinerQnt) || 0;
+    const copperQnt = parseInt(req.body.copperQnt) || 0;
+    const finalQnt = parseInt(req.body.finalQnt) || 0;
 
+    // Calculate Total with new fields
     const total = 
       (dishWash1000mlQnt * 60) + 
       (dishWash5000mlQnt * 270) +
@@ -79,9 +90,12 @@ app.post("/addTask", async (req, res) => {
       (laundryWash5000mlQnt * 580) +
       (floorCleanerRoseQnt * 99) +
       (floorCleanerJasmineQnt * 99) +
-      (toiletCleanerQnt * 99) +
+      (toiletCleanerQnt * 60) +
       (handWashBlackBerryQnt * 120) +
-      (handWashSandalwoodQnt * 120);
+      (handWashSandalwoodQnt * 120) +
+      (bathroomShinerQnt * 80) + // Bathroom Shiner: ₹80
+      (copperQnt * 60) + // Copper: ₹60
+      (finalQnt * 80); // Final: ₹80
 
     const payload = {
       no: taskNumber,
@@ -98,6 +112,9 @@ app.post("/addTask", async (req, res) => {
       toiletCleanerQnt,
       handWashBlackBerryQnt,
       handWashSandalwoodQnt,
+      bathroomShinerQnt, // New field
+      copperQnt, // New field
+      finalQnt, // New field
       Total: total,
     };
 
