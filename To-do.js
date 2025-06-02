@@ -1,55 +1,45 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const appendToSheet = require('./googleSheets'); // Import the Google Sheets function
+const appendToSheet = require('./googleSheets');
 const path = require("path");
 const app = express();
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set("views", path.join(__dirname, "views")); // Ensure correct path for views
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "public"))); 
+app.use(express.static(path.join(__dirname, "public")));
 
 // MongoDB Connection
-const dbURI = 'mongodb+srv://jenishrabadiya277:DlawQns07yu3RPQ1@jr-project.gtdgy.mongodb.net/?retryWrites=true&w=majority';
+const dbURI = process.env.MONGODB_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
-// Task Schema with Separate Fields
+// Task Schema
 const taskSchema = new mongoose.Schema({
   no: { type: String, required: true },
   date: { type: String, required: true },
   name: { type: String, required: true },
   number: { type: String, required: true },
   address: { type: String, required: true },
-  
-  // Dish Wash
   dishWash1000mlQnt: { type: Number, default: 0 },
   dishWash5000mlQnt: { type: Number, default: 0 },
-  
-  // Laundry Wash
   laundryWash1000mlQnt: { type: Number, default: 0 },
   laundryWash5000mlQnt: { type: Number, default: 0 },
-  
-  // Floor Cleaner
   floorCleanerRoseQnt: { type: Number, default: 0 },
   floorCleanerJasmineQnt: { type: Number, default: 0 },
-  
-  // Toilet Cleaner
   toiletCleanerQnt: { type: Number, default: 0 },
-  
-  // Hand Wash
   handWashBlackBerryQnt: { type: Number, default: 0 },
   handWashSandalwoodQnt: { type: Number, default: 0 },
-  
-  // Free Items (checkboxes)
-  bathroomShinerFree: { type: Boolean, default: false }, // Free Bathroom Shiner
-  copperFree: { type: Boolean, default: false }, // Free Copper
-  finalFree: { type: Boolean, default: false }, // Free Final
-  
-  // Total
+  bathroomShinerQnt: { type: Number, default: 0 }, // Quantity
+  copperQnt: { type: Number, default: 0 }, // Quantity
+  finalQnt: { type: Number, default: 0 }, // Quantity
+  bathroomShinerFree: { type: Boolean, default: false }, // Free
+  copperFree: { type: Boolean, default: false }, // Free
+  finalFree: { type: Boolean, default: false }, // Free
   Total: { type: Number, default: 0 },
 });
 
@@ -66,18 +56,21 @@ app.post("/addTask", async (req, res) => {
     const taskNumber = taskCount + 1;
     const currentDate = new Date().toISOString().split("T")[0];
 
-    // Parse quantities for existing fields
+    // Parse quantities
     const dishWash1000mlQnt = parseInt(req.body.dishWash1000mlQnt) || 0;
     const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
     const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
     const laundryWash5000mlQnt = parseInt(req.body.laundryWash5000mlQnt) || 0;
-    const floorCleanerRoseQnt = parseInt(req.body.floorCleanerRoseQnt) || 0;
-    const floorCleanerJasmineQnt = parseInt(req.body.floorCleanerJasmineQnt) || 0;
+    const floorCleanerRoseQnt = parseInt(req.body.flrRoseQnt) || 0;
+    const floorCleanerJasmineQnt = parseInt(req.body.flrJasmineQnt) || 0;
     const toiletCleanerQnt = parseInt(req.body.toiletCleanerQnt) || 0;
     const handWashBlackBerryQnt = parseInt(req.body.handWashBlackBerryQnt) || 0;
     const handWashSandalwoodQnt = parseInt(req.body.handWashSandalwoodQnt) || 0;
+    const bathroomShinerQnt = parseInt(req.body.bathroomShinerQnt) || 0;
+    const copperQnt = parseInt(req.body.copperQnt) || 0;
+    const finalQnt = parseInt(req.body.finalQnt) || 0;
 
-    // Parse checkbox inputs for free items
+    // Parse free item checkboxes
     const bathroomShinerFree = req.body.bathroomShinerFree === 'on';
     const copperFree = req.body.copperFree === 'on';
     const finalFree = req.body.finalFree === 'on';
@@ -92,7 +85,10 @@ app.post("/addTask", async (req, res) => {
       (floorCleanerJasmineQnt * 99) +
       (toiletCleanerQnt * 60) +
       (handWashBlackBerryQnt * 120) +
-      (handWashSandalwoodQnt * 120);
+      (handWashSandalwoodQnt * 120) +
+      (bathroomShinerQnt * 80) +
+      (copperQnt * 60) +
+      (finalQnt * 80);
 
     const payload = {
       no: taskNumber,
@@ -109,18 +105,21 @@ app.post("/addTask", async (req, res) => {
       toiletCleanerQnt,
       handWashBlackBerryQnt,
       handWashSandalwoodQnt,
-      bathroomShinerFree, // Free item
-      copperFree, // Free item
-      finalFree, // Free item
+      bathroomShinerQnt,
+      copperQnt,
+      finalQnt,
+      bathroomShinerFree,
+      copperFree,
+      finalFree,
       Total: total,
     };
 
     const task = await Task.create(payload);
 
-    // Call function to append data to Google Sheets
-    await appendToSheet(payload); // Appends the task to Google Sheets
+    // Append to Google Sheets
+    await appendToSheet(payload);
 
-    // Redirect to the Thank You page
+    // Render thank you page
     res.render("thankyou.ejs", { task });
   } catch (error) {
     console.error("Error creating task:", error);
