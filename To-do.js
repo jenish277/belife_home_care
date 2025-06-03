@@ -25,30 +25,37 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
 // Task Schema
-const taskSchema = new mongoose.Schema({
-  no: { type: String, required: true },
-  date: { type: String, required: true },
-  name: { type: String, required: true },
-  number: { type: String, required: true },
-  address: { type: String, required: true },
-  dishWash1000mlQnt: { type: Number, default: 0 },
-  dishWash5000mlQnt: { type: Number, default: 0 },
-  laundryWash1000mlQnt: { type: Number, default: 0 },
-  laundryWash5000mlQnt: { type: Number, default: 0 },
-  floorCleanerRoseQnt: { type: Number, default: 0 },
-  floorCleanerJasmineQnt: { type: Number, default: 0 },
-  floorCleanerJasmineFree: { type: Boolean, default: false },
-  toiletCleanerQnt: { type: Number, default: 0 },
-  handWashBlackBerryQnt: { type: Number, default: 0 },
-  handWashSandalwoodQnt: { type: Number, default: 0 },
-  bathroomShinerQnt: { type: Number, default: 0 },
-  copperQnt: { type: Number, default: 0 },
-  finalQnt: { type: Number, default: 0 },
-  bathroomShinerFree: { type: Boolean, default: false },
-  copperFree: { type: Boolean, default: false },
-  finalFree: { type: Boolean, default: false },
-  Total: { type: Number, default: 0 },
-});
+const taskSchema = new mongoose.Schema(
+  {
+    no: { type: String, required: true },
+    date: { type: String, required: true },
+    name: { type: String, required: true },
+    number: { type: String, required: true },
+    address: { type: String, required: true },
+    dishWash1000mlQnt: { type: Number, default: 0 },
+    dishWash5000mlQnt: { type: Number, default: 0 },
+    dishWashYellow5000mlQnt: { type: Number, default: 0 },
+    laundryWash1000mlQnt: { type: Number, default: 0 },
+    laundryWash5000mlQnt: { type: Number, default: 0 },
+    laundryWashSkyBule5000mlQnt: { type: Number, default: 0 },
+    floorCleanerRoseQnt: { type: Number, default: 0 },
+    floorCleanerJasmineQnt: { type: Number, default: 0 },
+    floorCleanerJasmineFree: { type: Boolean, default: false },
+    toiletCleanerQnt: { type: Number, default: 0 },
+    handWashBlackBerryQnt: { type: Number, default: 0 },
+    handWashSandalwoodQnt: { type: Number, default: 0 },
+    bathroomShinerQnt: { type: Number, default: 0 },
+    copperQnt: { type: Number, default: 0 },
+    finalQnt: { type: Number, default: 0 },
+    bathroomShinerFree: { type: Boolean, default: false },
+    copperFree: { type: Boolean, default: false },
+    finalFree: { type: Boolean, default: false },
+    Total: { type: Number, default: 0 },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Task = mongoose.model("Task", taskSchema);
 
@@ -59,15 +66,36 @@ app.get("/", async (req, res) => {
     const searchQuery = req.query.search || "";
     let tasks;
     if (searchQuery) {
-      tasks = await Task.find({
-        $or: [
-          { name: { $regex: searchQuery, $options: "i" } },
-          { number: { $regex: searchQuery, $options: "i" } },
-          { address: { $regex: searchQuery, $options: "i" } },
-        ],
-      }).sort({ createdAt: -1 });
+      tasks = await Task.aggregate([
+        {
+          $match: {
+            $or: [
+              { name: { $regex: searchQuery, $options: "i" } },
+              { number: { $regex: searchQuery, $options: "i" } },
+              { address: { $regex: searchQuery, $options: "i" } },
+            ],
+          },
+        },
+        {
+          $addFields: {
+            noNumeric: { $toInt: "$no" },
+          },
+        },
+        {
+          $sort: { createdAt: -1, noNumeric: -1 },
+        },
+      ]);
     } else {
-      tasks = await Task.find().sort({ createdAt: -1 });
+      tasks = await Task.aggregate([
+        {
+          $addFields: {
+            noNumeric: { $toInt: "$no" },
+          },
+        },
+        {
+          $sort: { createdAt: -1, noNumeric: -1 },
+        },
+      ]);
     }
     res.render("Tasks.ejs", { tasks, searchQuery });
   } catch (error) {
@@ -87,15 +115,36 @@ app.get("/tasks", async (req, res) => {
     const searchQuery = req.query.search || "";
     let tasks;
     if (searchQuery) {
-      tasks = await Task.find({
-        $or: [
-          { name: { $regex: searchQuery, $options: "i" } },
-          { number: { $regex: searchQuery, $options: "i" } },
-          { address: { $regex: searchQuery, $options: "i" } },
-        ],
-      }).sort({ createdAt: -1 });
+      tasks = await Task.aggregate([
+        {
+          $match: {
+            $or: [
+              { name: { $regex: searchQuery, $options: "i" } },
+              { number: { $regex: searchQuery, $options: "i" } },
+              { address: { $regex: searchQuery, $options: "i" } },
+            ],
+          },
+        },
+        {
+          $addFields: {
+            noNumeric: { $toInt: "$no" },
+          },
+        },
+        {
+          $sort: { createdAt: -1, noNumeric: -1 },
+        },
+      ]);
     } else {
-      tasks = await Task.find().sort({ createdAt: -1 });
+      tasks = await Task.aggregate([
+        {
+          $addFields: {
+            noNumeric: { $toInt: "$no" },
+          },
+        },
+        {
+          $sort: { createdAt: -1, noNumeric: -1 },
+        },
+      ]);
     }
 
     res.render("Tasks.ejs", { tasks, searchQuery });
@@ -128,8 +177,12 @@ app.post("/update/:id", async (req, res) => {
     // Parse quantities
     const dishWash1000mlQnt = parseInt(req.body.dishWash1000mlQnt) || 0;
     const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
+    const dishWashYellow5000mlQnt =
+      parseInt(req.body.dishWashYellow5000mlQnt) || 0;
     const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
     const laundryWash5000mlQnt = parseInt(req.body.laundryWash5000mlQnt) || 0;
+    const laundryWashSkyBule5000mlQnt =
+      parseInt(req.body.laundryWashSkyBule5000mlQnt) || 0;
     const floorCleanerRoseQnt = parseInt(req.body.floorCleanerRoseQnt) || 0;
     const floorCleanerJasmineQnt =
       parseInt(req.body.floorCleanerJasmineQnt) || 0;
@@ -150,8 +203,10 @@ app.post("/update/:id", async (req, res) => {
     const total =
       dishWash1000mlQnt * 60 +
       dishWash5000mlQnt * 270 +
+      dishWashYellow5000mlQnt * 180 +
       laundryWash1000mlQnt * 120 +
       laundryWash5000mlQnt * 580 +
+      laundryWashSkyBule5000mlQnt * 400 +
       floorCleanerRoseQnt * 99 +
       (floorCleanerJasmineFree ? 0 : floorCleanerJasmineQnt * 99) +
       toiletCleanerQnt * 60 +
@@ -168,8 +223,10 @@ app.post("/update/:id", async (req, res) => {
       address: req.body.address,
       dishWash1000mlQnt,
       dishWash5000mlQnt,
+      dishWashYellow5000mlQnt,
       laundryWash1000mlQnt,
       laundryWash5000mlQnt,
+      laundryWashSkyBule5000mlQnt,
       floorCleanerRoseQnt,
       floorCleanerJasmineQnt,
       floorCleanerJasmineFree,
@@ -225,8 +282,12 @@ app.post("/addTask", async (req, res) => {
     // Parse quantities
     const dishWash1000mlQnt = parseInt(req.body.dishWash1000mlQnt) || 0;
     const dishWash5000mlQnt = parseInt(req.body.dishWash5000mlQnt) || 0;
+    const dishWashYellow5000mlQnt =
+      parseInt(req.body.dishWashYellow5000mlQnt) || 0;
     const laundryWash1000mlQnt = parseInt(req.body.laundryWash1000mlQnt) || 0;
     const laundryWash5000mlQnt = parseInt(req.body.laundryWash5000mlQnt) || 0;
+    const laundryWashSkyBule5000mlQnt =
+      parseInt(req.body.laundryWashSkyBule5000mlQnt) || 0;
     const floorCleanerRoseQnt = parseInt(req.body.floorCleanerRoseQnt) || 0;
     const floorCleanerJasmineQnt =
       parseInt(req.body.floorCleanerJasmineQnt) || 0;
@@ -247,8 +308,10 @@ app.post("/addTask", async (req, res) => {
     const total =
       dishWash1000mlQnt * 60 +
       dishWash5000mlQnt * 270 +
+      dishWashYellow5000mlQnt * 180 +
       laundryWash1000mlQnt * 120 +
       laundryWash5000mlQnt * 580 +
+      laundryWashSkyBule5000mlQnt * 400 +
       floorCleanerRoseQnt * 99 +
       (floorCleanerJasmineFree ? 0 : floorCleanerJasmineQnt * 99) +
       toiletCleanerQnt * 60 +
@@ -266,8 +329,10 @@ app.post("/addTask", async (req, res) => {
       address: req.body.address,
       dishWash1000mlQnt,
       dishWash5000mlQnt,
+      dishWashYellow5000mlQnt,
       laundryWash1000mlQnt,
       laundryWash5000mlQnt,
+      laundryWashSkyBule5000mlQnt,
       floorCleanerRoseQnt,
       floorCleanerJasmineQnt,
       floorCleanerJasmineFree,
