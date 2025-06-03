@@ -35,15 +35,13 @@ async function appendToSheet(taskData) {
   ];
 
   try {
-    // Check if headers are already added to the sheet
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A1:Z1',
+      range: 'Sheet1!A1:V1',
     });
 
     const rows = sheetData.data.values || [];
 
-    // If no headers exist or they don't match, add them
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
@@ -54,7 +52,6 @@ async function appendToSheet(taskData) {
       console.log('Headers added to the sheet.');
     }
 
-    // Prepare the data to append
     const resource = {
       values: [
         [
@@ -84,7 +81,6 @@ async function appendToSheet(taskData) {
       ],
     };
 
-    // Append data to the sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2',
@@ -98,4 +94,97 @@ async function appendToSheet(taskData) {
   }
 }
 
-module.exports = appendToSheet;
+async function updateSheet(taskId, updatedTask) {
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Sheet1!A2:V',
+    });
+
+    const rows = response.data.values || [];
+    let rowIndex = -1;
+
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][0] == updatedTask.no) {
+        rowIndex = i + 2; // +2 because rows start at A2
+        break;
+      }
+    }
+
+    if (rowIndex === -1) {
+      console.error("Task not found in Google Sheets");
+      return;
+    }
+
+    const updatedRow = [
+      updatedTask.no,
+      updatedTask.date,
+      updatedTask.name,
+      updatedTask.number,
+      updatedTask.address,
+      updatedTask.dishWash1000mlQnt,
+      updatedTask.dishWash5000mlQnt,
+      updatedTask.laundryWash1000mlQnt,
+      updatedTask.laundryWash5000mlQnt,
+      updatedTask.floorCleanerRoseQnt,
+      updatedTask.floorCleanerJasmineQnt,
+      updatedTask.toiletCleanerQnt,
+      updatedTask.handWashBlackBerryQnt,
+      updatedTask.handWashSandalwoodQnt,
+      updatedTask.bathroomShinerQnt,
+      updatedTask.copperQnt,
+      updatedTask.finalQnt,
+      updatedTask.bathroomShinerFree ? 'Yes' : 'No',
+      updatedTask.copperFree ? 'Yes' : 'No',
+      updatedTask.finalFree ? 'Yes' : 'No',
+      updatedTask.floorCleanerJasmineFree ? 'Yes' : 'No',
+      updatedTask.Total,
+    ];
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `Sheet1!A${rowIndex}:V${rowIndex}`,
+      valueInputOption: 'RAW',
+      resource: { values: [updatedRow] },
+    });
+
+    console.log('Google Sheet updated successfully!');
+  } catch (err) {
+    console.error('Error updating Google Sheet:', err);
+  }
+}
+
+async function deleteFromSheet(taskNo) {
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Sheet1!A2:V',
+    });
+
+    const rows = response.data.values || [];
+    let rowIndex = -1;
+
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][0] == taskNo) {
+        rowIndex = i + 2; // +2 because rows start at A2
+        break;
+      }
+    }
+
+    if (rowIndex === -1) {
+      console.error('Task not found in Google Sheets');
+      return;
+    }
+
+    await sheets.spreadsheets.values.clear({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `Sheet1!A${rowIndex}:V${rowIndex}`,
+    });
+
+    console.log('Task deleted from Google Sheets!');
+  } catch (err) {
+    console.error('Error deleting from Google Sheets:', err);
+  }
+}
+
+module.exports = { appendToSheet, updateSheet, deleteFromSheet };
