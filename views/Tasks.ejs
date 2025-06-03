@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+    }
+    .add-btn {
+      margin-bottom: 20px;
+    }
+    .search-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .table th, .table td {
+      vertical-align: middle;
+    }
+    .btn-sm {
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center mb-4">Task List</h2>
+
+    <!-- Add Button -->
+    <a href="/add" class="btn btn-primary add-btn">Add New Task</a>
+
+    <!-- Search Form -->
+    <form class="search-form" action="/tasks" method="GET">
+      <input type="text" name="search" class="form-control" placeholder="Search by name, number, or address" value="<%= searchQuery %>">
+      <button type="submit" class="btn btn-secondary">Search</button>
+    </form>
+
+    <!-- Task Table -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Phone Number</th>
+          <th>Address</th>
+          <th>Dish Wash (1000ML)</th>
+          <th>Dish Wash (5000ML)</th>
+          <th>Laundry Wash (1000ML)</th>
+          <th>Laundry Wash (5000ML)</th>
+          <th>Floor Cleaner (Rose)</th>
+          <th>Floor Cleaner (Jasmine)</th>
+          <th>Floor Cleaner (Jasmine) Free</th>
+          <th>Toilet Cleaner</th>
+          <th>Hand Wash (Black Berry)</th>
+          <th>Hand Wash (Sandalwood)</th>
+          <th>Bathroom Shiner</th>
+          <th>Copper</th>
+          <th>Final</th>
+          <th>Bathroom Shiner Free</th>
+          <th>Copper Free</th>
+          <th>Final Free</th>
+          <th>Total Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (tasks.length === 0) { %>
+          <tr>
+            <td colspan="7" class="text-center">No tasks found</td>
+          </tr>
+        <% } else { %>
+          <% tasks.forEach(task => { %>
+            <tr>
+              <td><%= task.no %></td>
+              <td><%= task.date %></td>
+              <td><%= task.name %></td>
+              <td><%= task.number %></td>
+              <td><%= task.address %></td>
+              <td><%= task.dishWash1000mlQnt %></td>
+              <td><%= task.dishWash5000mlQnt %></td>
+              <td><%= task.laundryWash1000mlQnt %></td>
+              <td><%= task.laundryWash5000mlQnt %></td>
+              <td><%= task.floorCleanerRoseQnt %></td>
+              <td><%= task.floorCleanerJasmineQnt %></td>
+              <td><%= task.floorCleanerJasmineFree ? "Yes" : "-" %></td>
+              <td><%= task.toiletCleanerQnt %></td>
+              <td><%= task.handWashBlackBerryQnt %></td>
+              <td><%= task.handWashSandalwoodQnt %></td>
+              <td><%= task.bathroomShinerQnt %></td>
+              <td><%= task.copperQnt %></td>
+              <td><%= task.finalQnt %></td>
+              <td><%= task.bathroomShinerFree ? "Yes" : "-" %></td>
+              <td><%= task.copperFree ? "Yes" : "-" %></td>
+              <td><%= task.finalFree ? "Yes" : "-" %></td>
+              <td><%= task.Total %> INR</td>
+              <td>
+                <a href="/edit/<%= task._id %>" class="btn btn-sm btn-warning">Edit</a>
+                <form action="/delete/<%= task._id %>" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this task?')">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
