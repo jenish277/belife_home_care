@@ -6,7 +6,7 @@ const auth = new google.auth.GoogleAuth({
     type: process.env.TYPE,
     project_id: process.env.PROJECT_ID,
     private_key_id: process.env.PRIVATE_KEY_ID,
-    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), // Replace escaped newlines
     client_email: process.env.CLIENT_EMAIL,
     client_id: process.env.CLIENT_ID,
     auth_uri: process.env.AUTH_URI,
@@ -20,28 +20,23 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: 'v4', auth });
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID; // Add this to your environment variables
 
 async function appendToSheet(taskData) {
   const headers = [
     'No', 'Date', 'Name', 'Number', 'Address',
-    'Dish Wash 1000ml', 'Dish Wash 5000ml','Dish Wash Yellow 5000ml',
-    'Laundry Wash 1000ml', 'Laundry Wash 5000ml','Laundry Wash Sky-Bule 5000ml',
-    'Floor Cleaner Rose', 'Floor Cleaner Jasmine',
-    'Toilet Cleaner', 'Hand Wash BlackBerry', 'Hand Wash Sandalwood',
-    'Bathroom Shiner', 'Copper', 'Final',
-    'Bathroom Shiner Free', 'Copper Free', 'Final Free', 'Floor Cleaner Jasmine Free',
-    'Total',
+    'Dish Wash', 'Dish Quantity', 'Laundry Wash', 'Laundry Quantity',
+    'Floor Cleaner', 'Floor Cleaner Quantity', 'Toilet Cleaner Quantity',
+    'Hand Wash', 'Hand Wash Quantity', 'Total',
   ];
 
   try {
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A1:V1',
+      range: 'Sheet1!A1:Z1',
     });
 
     const rows = sheetData.data.values || [];
-
     if (rows.length === 0 || rows[0].join() !== headers.join()) {
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
@@ -60,24 +55,15 @@ async function appendToSheet(taskData) {
           taskData.name,
           taskData.number,
           taskData.address,
-          taskData.dishWash1000mlQnt,
-          taskData.dishWash5000mlQnt,
-          taskData.dishWashYellow5000mlQnt,
-          taskData.laundryWash1000mlQnt,
-          taskData.laundryWash5000mlQnt,
-          taskData.laundryWashSkyBule5000mlQnt,
-          taskData.floorCleanerRoseQnt,
-          taskData.floorCleanerJasmineQnt,
-          taskData.toiletCleanerQnt,
-          taskData.handWashBlackBerryQnt,
-          taskData.handWashSandalwoodQnt,
-          taskData.bathroomShinerQnt,
-          taskData.copperQnt,
-          taskData.finalQnt,
-          taskData.bathroomShinerFree ? 'Yes' : 'No',
-          taskData.copperFree ? 'Yes' : 'No',
-          taskData.finalFree ? 'Yes' : 'No',
-          taskData.floorCleanerJasmineFree ? 'Yes' : 'No',
+          taskData.dishWash,
+          taskData.dishQnt,
+          taskData.laundryWash,
+          taskData.laundryQnt,
+          taskData.floorClener,
+          taskData.floorClenerQnt,
+          taskData.toiletClenerQnt,
+          taskData.handWash,
+          taskData.handWashQnt,
           taskData.Total,
         ],
       ],
@@ -96,99 +82,4 @@ async function appendToSheet(taskData) {
   }
 }
 
-async function updateSheet(taskId, updatedTask) {
-  try {
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A2:V',
-    });
-
-    const rows = response.data.values || [];
-    let rowIndex = -1;
-
-    for (let i = 0; i < rows.length; i++) {
-      if (rows[i][0] == updatedTask.no) {
-        rowIndex = i + 2; // +2 because rows start at A2
-        break;
-      }
-    }
-
-    if (rowIndex === -1) {
-      console.error("Task not found in Google Sheets");
-      return;
-    }
-
-    const updatedRow = [
-      updatedTask.no,
-      updatedTask.date,
-      updatedTask.name,
-      updatedTask.number,
-      updatedTask.address,
-      updatedTask.dishWash1000mlQnt,
-      updatedTask.dishWash5000mlQnt,
-      updatedTask.dishWashYellow5000mlQnt,
-      updatedTask.laundryWash1000mlQnt,
-      updatedTask.laundryWash5000mlQnt,
-      updatedTask.laundryWashSkyBule5000mlQnt,
-      updatedTask.floorCleanerRoseQnt,
-      updatedTask.floorCleanerJasmineQnt,
-      updatedTask.toiletCleanerQnt,
-      updatedTask.handWashBlackBerryQnt,
-      updatedTask.handWashSandalwoodQnt,
-      updatedTask.bathroomShinerQnt,
-      updatedTask.copperQnt,
-      updatedTask.finalQnt,
-      updatedTask.bathroomShinerFree ? 'Yes' : 'No',
-      updatedTask.copperFree ? 'Yes' : 'No',
-      updatedTask.finalFree ? 'Yes' : 'No',
-      updatedTask.floorCleanerJasmineFree ? 'Yes' : 'No',
-      updatedTask.Total,
-    ];
-
-    await sheets.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `Sheet1!A${rowIndex}:V${rowIndex}`,
-      valueInputOption: 'RAW',
-      resource: { values: [updatedRow] },
-    });
-
-    console.log('Google Sheet updated successfully!');
-  } catch (err) {
-    console.error('Error updating Google Sheet:', err);
-  }
-}
-
-async function deleteFromSheet(taskNo) {
-  try {
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A2:V',
-    });
-
-    const rows = response.data.values || [];
-    let rowIndex = -1;
-
-    for (let i = 0; i < rows.length; i++) {
-      if (rows[i][0] == taskNo) {
-        rowIndex = i + 2; // +2 because rows start at A2
-        break;
-      }
-    }
-
-    if (rowIndex === -1) {
-      console.error('Task not found in Google Sheets');
-      return;
-    }
-
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `Sheet1!A${rowIndex}:V${rowIndex}`,
-    });
-
-    console.log('Task deleted from Google Sheets!');
-  } catch (err) {
-    console.error('Error deleting from Google Sheets:', err);
-  }
-}
-
-module.exports = { appendToSheet, updateSheet, deleteFromSheet };
+module.exports = appendToSheet;
