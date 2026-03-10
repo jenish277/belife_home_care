@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require("path");
 require('dotenv').config();
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 
 // Import routes
@@ -353,6 +355,10 @@ app.post("/admin/stock", async (req, res) => {
 app.use(errorHandler);
 
 // Start Server
-app.listen(5001, () => {
-  console.log("Server Connected on port: 5001");
-});
+if (require.main === module) {
+  app.listen(5001, () => {
+    console.log("Server Connected on port: 5001");
+  });
+} else {
+  module.exports = app;
+}
