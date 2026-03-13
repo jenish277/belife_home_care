@@ -90,6 +90,7 @@
                             <th>Address</th>
                             <th>Purchase History</th>
                             <th>Total Spent</th>
+                            <th>Pending</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -107,6 +108,7 @@
                                 <% } %>
                             </td>
                             <td><strong>₹<%= user.totalSpent || 0 %></strong></td>
+                            <td><strong style="color: #ef4444;">₹<%= user.totalPending || 0 %></strong></td>
                             <td>
                                 <button class="btn btn-warning btn-sm" onclick="editUser('<%= user._id %>', '<%= user.name %>', '<%= user.phoneNumber %>', '<%= user.address %>')"><i class="fas fa-edit"></i></button>
                                 <form action="/admin/users/delete/<%= user._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">

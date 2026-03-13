@@ -81,9 +81,86 @@
         }
 
         .top-bar h2 {
-            margin: 0;
+            margin: 0 0 20px 0;
             color: #1e293b;
             font-weight: 700;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .filter-label {
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label i {
+            color: #3b82f6;
+            font-size: 16px;
+        }
+
+        #dateFilter {
+            min-width: 160px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        #dateFilter:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        #customDateRange {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #customDateRange input {
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        #customDateRange input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        #customDateRange .date-separator {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        #customDateRange button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.2s;
+        }
+
+        #customDateRange button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
         }
 
         .stats-grid {
@@ -295,7 +372,7 @@
             .main-content {
                 margin-left: 0;
                 padding: 10px;
-                padding-top: 70px;
+                padding-top: 200px;
             }
 
             .top-bar {
@@ -303,33 +380,64 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                padding: 12px 15px;
+                padding: 15px;
                 margin-bottom: 0;
                 border-radius: 0;
                 z-index: 998;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             }
 
             .top-bar h2 {
-                font-size: 1.2rem;
-                margin: 0;
+                font-size: 1.1rem;
+                margin: 0 0 12px 0;
             }
 
-            .top-bar select {
-                width: auto !important;
-                font-size: 0.85rem;
-                padding: 6px 10px;
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .filter-label {
+                font-size: 13px;
+                margin-bottom: 0;
+                justify-content: center;
+            }
+
+            #dateFilter {
+                width: 100% !important;
+                min-width: auto;
+                font-size: 14px;
+            }
+
+            #customDateRange {
+                flex-direction: column !important;
+                gap: 8px !important;
+                width: 100%;
+            }
+
+            #customDateRange input {
+                width: 100% !important;
+                font-size: 14px;
+            }
+
+            #customDateRange .date-separator {
+                font-size: 12px;
+                text-align: center;
+            }
+
+            #customDateRange button {
+                width: 100% !important;
+                font-size: 14px;
+                padding: 10px;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(1, 1fr);
                 gap: 10px;
-                margin-top: 20px;
-                margin-bottom: 20px;
+                margin-top: 10px;
+                margin-bottom: 15px;
             }
 
             .stat-card {
@@ -352,12 +460,40 @@
 
             .card {
                 border-radius: 10px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
             }
 
             .card-header {
                 padding: 12px 15px;
                 font-size: 0.95rem;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .card-body .row {
+                gap: 10px;
+            }
+
+            .card-body .col-md-4 {
+                margin-bottom: 10px;
+            }
+
+            .card-body .col-md-4 > div {
+                padding: 12px !important;
+            }
+
+            .card-body .col-md-4 h6 {
+                font-size: 11px !important;
+            }
+
+            .card-body .col-md-4 h3 {
+                font-size: 1.3rem !important;
+            }
+
+            .card-body .col-md-4 i {
+                font-size: 1.5rem !important;
             }
 
             .table {
@@ -400,27 +536,31 @@
                 justify-content: center;
                 cursor: pointer;
             }
-
-            .mobile-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.6);
-                z-index: 1000;
-                display: none;
-            }
-
-            .mobile-overlay.show {
-                display: block;
-            }
         }
 
         @media (min-width: 769px) {
             .mobile-menu-btn {
                 display: none;
             }
+
+            .mobile-overlay {
+                display: none !important;
+            }
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+        }
+
+        .mobile-overlay.show {
+            display: block;
         }
     </style>
 </head>
@@ -448,13 +588,28 @@
     <div class="main-content">
         <div class="top-bar">
             <h2>Dashboard Overview</h2>
-            <select id="dateFilter" class="form-select" style="width: 200px;">
-                <option value="all">All Time</option>
-                <option value="today">Today</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-            </select>
+            <div class="filter-container">
+                <span class="filter-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Date Filter
+                </span>
+                <select id="dateFilter" class="form-select">
+                    <option value="all" <%= filter === 'all' ? 'selected' : '' %>>All Time</option>
+                    <option value="today" <%= filter === 'today' ? 'selected' : '' %>>Today</option>
+                    <option value="week" <%= filter === 'week' ? 'selected' : '' %>>This Week</option>
+                    <option value="month" <%= filter === 'month' ? 'selected' : '' %>>This Month</option>
+                    <option value="year" <%= filter === 'year' ? 'selected' : '' %>>This Year</option>
+                    <option value="custom" <%= filter === 'custom' ? 'selected' : '' %>>Custom Range</option>
+                </select>
+                <div id="customDateRange" style="display: <%= filter === 'custom' ? 'flex' : 'none' %>;">
+                    <input type="date" id="startDate" class="form-control" style="width: 150px;" value="<%= startDate %>">
+                    <span class="date-separator">to</span>
+                    <input type="date" id="endDate" class="form-control" style="width: 150px;" value="<%= endDate %>">
+                    <button class="btn" onclick="applyCustomDate()">
+                        <i class="fas fa-check me-1"></i>Apply
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="stats-grid">
@@ -463,12 +618,6 @@
                 <h6>Total Products</h6>
                 <h3 id="totalProducts">
                     <%= products.length %>
-                </h3>
-            </div>
-            <div class="stat-card green">
-                <i class="fas fa-rupee-sign"></i>
-                <h6>Total Sales</h6>
-                <h3 id="totalSales">₹<%= totalSales %>
                 </h3>
             </div>
             <div class="stat-card purple">
@@ -487,38 +636,74 @@
             </div>
         </div>
 
+        <div class="card mb-4">
+            <div class="card-header">Payment Method Breakdown</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: #f8fafc; border-radius: 10px; border-left: 4px solid #6366f1;">
+                            <i class="fas fa-money-bill-wave" style="font-size: 2rem; color: #6366f1; opacity: 0.3;"></i>
+                            <h6 class="text-muted mt-2 mb-1" style="font-size: 12px; text-transform: uppercase;">Cash Payment</h6>
+                            <h3 class="mb-0" style="color: #1e293b; font-weight: 700;">₹<%= totalCash %></h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: #f8fafc; border-radius: 10px; border-left: 4px solid #10b981;">
+                            <i class="fab fa-google-pay" style="font-size: 2rem; color: #10b981; opacity: 0.3;"></i>
+                            <h6 class="text-muted mt-2 mb-1" style="font-size: 12px; text-transform: uppercase;">GPay Payment</h6>
+                            <h3 class="mb-0" style="color: #1e293b; font-weight: 700;">₹<%= totalGPay %></h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: #f8fafc; border-radius: 10px; border-left: 4px solid #ef4444;">
+                            <i class="fas fa-clock" style="font-size: 2rem; color: #ef4444; opacity: 0.3;"></i>
+                            <h6 class="text-muted mt-2 mb-1" style="font-size: 12px; text-transform: uppercase;">Pending Total</h6>
+                            <h3 class="mb-0" style="color: #1e293b; font-weight: 700;">₹<%= totalPending %></h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
+                            <i class="fas fa-calculator" style="font-size: 2rem; opacity: 0.3;"></i>
+                            <h6 class="mt-2 mb-1" style="font-size: 12px; text-transform: uppercase; opacity: 0.9;">Total Sales</h6>
+                            <h3 class="mb-0" style="font-weight: 700;">₹<%= totalSales %></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
-            <div class="card-header">Recent Orders</div>
+            <div class="card-header">Product Sales</div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Customer</th>
-                            <th>Products</th>
-                            <th>Total</th>
-                            <th>Date</th>
+                            <th>Product Name</th>
+                            <th>Quantity Sold</th>
+                            <th>Total Sales</th>
                         </tr>
                     </thead>
-                    <tbody id="ordersTableBody">
-                        <% orders.forEach(order=> { %>
-                            <tr>
-                                <td><strong>
-                                        <%= order.user.name %>
-                                    </strong></td>
-                                <td>
-                                    <% order.products.forEach(item=> { %>
-                                        <span class="badge bg-primary">
-                                            <%= item.product.name %> (x<%= item.quantity %>)
-                                        </span>
-                                        <% }) %>
-                                </td>
-                                <td><strong>₹<%= order.total %></strong></td>
-                                <td>
-                                    <%= order.orderDate.toDateString() %>
-                                </td>
-                            </tr>
+                    <tbody>
+                        <% if (productSales.length > 0) { %>
+                            <% productSales.forEach(product => { %>
+                                <tr>
+                                    <td><strong><%= product.name %></strong></td>
+                                    <td><span class="badge bg-info"><%= product.quantity %> units</span></td>
+                                    <td><strong>₹<%= product.totalSales %></strong></td>
+                                </tr>
                             <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="3" class="text-center">No sales data available</td>
+                            </tr>
+                        <% } %>
                     </tbody>
+                    <tfoot style="background: #f8fafc; border-top: 2px solid #e2e8f0;">
+                        <tr>
+                            <td colspan="2" class="text-end" style="padding: 15px; font-weight: 600; color: #475569;">Total Discount:</td>
+                            <td style="padding: 15px;"><strong style="color: #ef4444; font-size: 1.1rem;">₹<%= totalDiscount %></strong></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <%- include('pagination', { currentPage, totalPages }) %>
@@ -526,94 +711,63 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/mobile.js"></script>
-    <script src="/pagination.js"></script>
     <script>
-        const allOrders = <% - JSON.stringify(orders) %>;
-        const allUsers = <% - JSON.stringify(users) %>;
-
-        function filterDashboard() {
-            const filter = document.getElementById('dateFilter').value;
-            const now = new Date();
-
-            let filteredOrders = allOrders.filter(order => {
-                if (filter === 'all') return true;
-
-                const orderDate = new Date(order.orderDate);
-
-                if (filter === 'today') {
-                    return orderDate.toDateString() === now.toDateString();
-                } else if (filter === 'week') {
-                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    return orderDate >= weekAgo;
-                } else if (filter === 'month') {
-                    return orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
-                } else if (filter === 'year') {
-                    return orderDate.getFullYear() === now.getFullYear();
-                }
-                return true;
-            });
-
-            // Update stats
-            const totalSales = filteredOrders.reduce((sum, order) => sum + order.total, 0);
-            document.getElementById('totalSales').textContent = '₹' + totalSales;
-            document.getElementById('totalOrders').textContent = filteredOrders.length;
-
-            // Render orders table
-            const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '';
-
-            filteredOrders.slice(0, 10).forEach(order => {
-                let productsHtml = '';
-                order.products.forEach(item => {
-                    productsHtml += `<span class="badge bg-primary">${item.product.name} (x${item.quantity})</span> `;
-                });
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${order.user.name}</strong></td>
-                        <td>${productsHtml}</td>
-                        <td><strong>₹${order.total}</strong></td>
-                        <td>${new Date(order.orderDate).toDateString()}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        document.getElementById('dateFilter').addEventListener('change', filterDashboard);
-
-        // Mobile menu
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-
-        // Ensure sidebar is closed on page load
-        sidebar.classList.remove('show');
-        mobileOverlay.classList.remove('show');
-
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                const isOpen = sidebar.classList.contains('show');
-                if (isOpen) {
-                    sidebar.classList.remove('show');
-                    mobileOverlay.classList.remove('show');
-                } else {
-                    sidebar.classList.add('show');
-                    mobileOverlay.classList.add('show');
-                }
-            });
-
-            mobileOverlay.addEventListener('click', () => {
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            
+            if (mobileMenuBtn && sidebar && mobileOverlay) {
                 sidebar.classList.remove('show');
                 mobileOverlay.classList.remove('show');
-            });
-
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.addEventListener('click', () => {
+                
+                mobileMenuBtn.addEventListener('click', function() {
+                    const isOpen = sidebar.classList.contains('show');
+                    if (isOpen) {
+                        sidebar.classList.remove('show');
+                        mobileOverlay.classList.remove('show');
+                    } else {
+                        sidebar.classList.add('show');
+                        mobileOverlay.classList.add('show');
+                    }
+                });
+                
+                mobileOverlay.addEventListener('click', function() {
                     sidebar.classList.remove('show');
                     mobileOverlay.classList.remove('show');
                 });
-            });
+                
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        sidebar.classList.remove('show');
+                        mobileOverlay.classList.remove('show');
+                    });
+                });
+            }
+        });
+
+        // Date filter functionality
+        const dateFilter = document.getElementById('dateFilter');
+        const customDateRange = document.getElementById('customDateRange');
+
+        dateFilter.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customDateRange.style.display = 'flex';
+            } else {
+                customDateRange.style.display = 'none';
+                window.location.href = `/?filter=${this.value}`;
+            }
+        });
+
+        function applyCustomDate() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (startDate && endDate) {
+                window.location.href = `/?filter=custom&startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                alert('Please select both start and end dates');
+            }
         }
     </script>
 </body>

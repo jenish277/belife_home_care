@@ -18,10 +18,7 @@ function initializeClient() {
   });
 
   client.on('qr', (qr) => {
-    console.log('\n=== WhatsApp QR Code ===');
-    qrcode.generate(qr, {small: true});
-    console.log('Scan this QR code with your phone\'s WhatsApp');
-    console.log('========================\n');
+    // QR code generation disabled
   });
 
   client.on('ready', () => {
