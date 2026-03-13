@@ -27,7 +27,7 @@ const authMiddleware = require("./middleware/authMiddleware");
 const errorHandler = require("./middleware/errorHandler");
 
 // MongoDB Connection
-const dbURI = "mongodb+srv://jenishrabadiya277:DlawQns07yu3RPQ1@jr-project.gtdgy.mongodb.net/?retryWrites=true&w=majority";
+const dbURI = process.env.MONGO_URL
 mongoose
   .connect(dbURI)
   .then(() => console.log("Connected to MongoDB"))
@@ -52,7 +52,7 @@ app.get("/", async (req, res) => {
 
     if (filter || startDate || endDate) {
       const now = new Date();
-      
+
       if (filter === 'today') {
         const start = new Date(now.setHours(0, 0, 0, 0));
         const end = new Date(now.setHours(23, 59, 59, 999));
@@ -67,19 +67,19 @@ app.get("/", async (req, res) => {
         const start = new Date(now.getFullYear(), 0, 1);
         dateQuery = { orderDate: { $gte: start } };
       } else if (startDate && endDate) {
-        dateQuery = { 
-          orderDate: { 
-            $gte: new Date(startDate), 
-            $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) 
-          } 
+        dateQuery = {
+          orderDate: {
+            $gte: new Date(startDate),
+            $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+          }
         };
       }
     }
-    
+
     const products = await require("./models/Product").find();
     const users = await require("./models/User").find();
     const allOrders = await require("./models/Order").find(dateQuery).populate("user").populate("products.product").sort({ orderDate: -1 });
-    
+
     // Calculate product sales and payment totals
     const productSalesMap = {};
     let totalSales = 0;
@@ -87,11 +87,11 @@ app.get("/", async (req, res) => {
     let gpayTotal = 0;
     let totalDiscount = 0;
     let totalPending = 0;
-    
+
     allOrders.forEach(order => {
       totalSales += order.total;
       totalDiscount += (order.discount || 0);
-      
+
       // Calculate payment method totals
       if (order.paymentMethod === 'Cash') {
         cashTotal += order.total;
@@ -101,10 +101,10 @@ app.get("/", async (req, res) => {
         // If payment method is Pending, entire order total is pending
         totalPending += order.total;
       }
-      
+
       // Also add any additional pending amount from pending field
       totalPending += (order.pending || 0);
-      
+
       order.products.forEach(item => {
         const productId = item.product._id.toString();
         if (!productSalesMap[productId]) {
@@ -118,22 +118,22 @@ app.get("/", async (req, res) => {
         productSalesMap[productId].totalSales += item.quantity * item.price;
       });
     });
-    
+
     const productSales = Object.values(productSalesMap).sort((a, b) => b.totalSales - a.totalSales);
     const totalProductSales = productSales.length;
     const totalProductPages = Math.ceil(totalProductSales / limit);
     const paginatedProductSales = productSales.slice(skip, skip + limit);
-    
-    res.render("admin/dashboard", { 
-      products, 
-      users, 
+
+    res.render("admin/dashboard", {
+      products,
+      users,
       orders: allOrders,
-      totalSales, 
+      totalSales,
       totalCash: cashTotal,
       totalGPay: gpayTotal,
       totalPending,
       totalDiscount,
-      currentPage: page, 
+      currentPage: page,
       totalPages: totalProductPages,
       filter: filter || 'all',
       startDate: startDate || '',
@@ -151,12 +151,12 @@ app.get("/admin/products", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    
+
     const Product = require("./models/Product");
     const totalProducts = await Product.countDocuments();
     const products = await Product.find().skip(skip).limit(limit);
     const totalPages = Math.ceil(totalProducts / limit);
-    
+
     res.render("admin/products", { products, currentPage: page, totalPages });
   } catch (error) {
     res.status(500).send(error.message);
@@ -199,16 +199,16 @@ app.get("/admin/users", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    
+
     const User = require("./models/User");
     const Order = require("./models/Order");
     const totalUsers = await User.countDocuments();
     const users = await User.find().skip(skip).limit(limit);
-    
+
     const usersWithOrders = await Promise.all(users.map(async (user) => {
       const orders = await Order.find({ user: user._id }).populate('products.product');
       const totalSpent = orders.reduce((sum, order) => sum + order.total, 0);
-      
+
       // Calculate total pending for this user
       const totalPending = orders.reduce((sum, order) => {
         let pending = 0;
@@ -218,7 +218,7 @@ app.get("/admin/users", async (req, res) => {
         pending += (order.pending || 0);
         return sum + pending;
       }, 0);
-      
+
       return {
         ...user.toObject(),
         orders: orders,
@@ -226,7 +226,7 @@ app.get("/admin/users", async (req, res) => {
         totalPending: totalPending
       };
     }));
-    
+
     const totalPages = Math.ceil(totalUsers / limit);
     res.render("admin/users", { users: usersWithOrders, currentPage: page, totalPages });
   } catch (error) {
@@ -278,14 +278,14 @@ app.get("/admin/orders", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    
+
     const Order = require("./models/Order");
     const totalOrders = await Order.countDocuments();
     const orders = await Order.find().populate("user").populate("products.product").sort({ orderDate: -1 }).skip(skip).limit(limit);
     const users = await require("./models/User").find();
     const products = await require("./models/Product").find();
     const totalPages = Math.ceil(totalOrders / limit);
-    
+
     res.render("admin/orders", { orders, users, products, currentPage: page, totalPages });
   } catch (error) {
     res.status(500).send(error.message);
@@ -297,7 +297,7 @@ app.post("/admin/orders", async (req, res) => {
     const Order = require("./models/Order");
     const Product = require("./models/Product");
     const User = require("./models/User");
-    
+
     // Create or find user
     let user = await User.findOne({ phoneNumber: req.body.customerPhone });
     if (!user) {
@@ -307,16 +307,16 @@ app.post("/admin/orders", async (req, res) => {
         address: req.body.customerAddress
       });
     }
-    
+
     // Handle multiple products
     const productIds = Array.isArray(req.body.productId) ? req.body.productId : [req.body.productId];
     const quantities = Array.isArray(req.body.quantity) ? req.body.quantity : [req.body.quantity];
-    
+
     // Check stock availability first
     for (let i = 0; i < productIds.length; i++) {
       const product = await Product.findById(productIds[i]);
       const qty = parseInt(quantities[i]);
-      
+
       if (product.availableQuantity < qty) {
         return res.status(400).send(`
           <script>
@@ -326,34 +326,34 @@ app.post("/admin/orders", async (req, res) => {
         `);
       }
     }
-    
+
     let orderProducts = [];
     let subtotal = 0;
     let productDetails = [];
-    
+
     for (let i = 0; i < productIds.length; i++) {
       const product = await Product.findById(productIds[i]);
       const qty = parseInt(quantities[i]);
       const itemTotal = product.price * qty;
-      
+
       orderProducts.push({
         product: productIds[i],
         quantity: qty,
         price: product.price
       });
-      
+
       subtotal += itemTotal;
       productDetails.push(`${product.name} - ₹${product.price} (x${qty}) = ₹${itemTotal}`);
-      
+
       // Update stock
       product.availableQuantity -= qty;
       await product.save();
     }
-    
+
     const discount = parseFloat(req.body.discount) || 0;
     const pending = parseFloat(req.body.pending) || 0;
     const total = subtotal - discount;
-    
+
     const order = await Order.create({
       user: user._id,
       products: orderProducts,
@@ -362,13 +362,13 @@ app.post("/admin/orders", async (req, res) => {
       pending: pending,
       paymentMethod: req.body.paymentMethod
     });
-    
+
     // Send WhatsApp message
     const phoneWithCountryCode = user.phoneNumber.startsWith('+91') ? user.phoneNumber : '+91' + user.phoneNumber;
     const message = `🛒 *Order Confirmation*\n\nHi ${user.name}!\n\n📦 Products:\n${productDetails.join('\n')}\n\n💰 Subtotal: ₹${subtotal}\n🎯 Discount: ₹${discount}\n💳 Total: ₹${total}\n\nThank you for your order!\n\n*BeLife Home Care*`;
-    
+
     whatsappService.sendBill(phoneWithCountryCode, message);
-    
+
     res.redirect("/admin/orders");
   } catch (error) {
     res.status(500).send(error.message);
@@ -390,7 +390,7 @@ app.post("/admin/orders/update/:id", async (req, res) => {
     const Order = require("./models/Order");
     const Product = require("./models/Product");
     const User = require("./models/User");
-    
+
     let user = await User.findOne({ phoneNumber: req.body.customerPhone });
     if (!user) {
       user = await User.create({
@@ -403,13 +403,13 @@ app.post("/admin/orders/update/:id", async (req, res) => {
       user.address = req.body.customerAddress;
       await user.save();
     }
-    
+
     const product = await Product.findById(req.body.productId);
     const subtotal = product.price * req.body.quantity;
     const discount = parseFloat(req.body.discount) || 0;
     const pending = parseFloat(req.body.pending) || 0;
     const total = subtotal - discount;
-    
+
     await Order.findByIdAndUpdate(req.params.id, {
       user: user._id,
       products: [{ product: req.body.productId, quantity: req.body.quantity, price: product.price }],
@@ -418,7 +418,7 @@ app.post("/admin/orders/update/:id", async (req, res) => {
       pending: pending,
       paymentMethod: req.body.paymentMethod
     });
-    
+
     res.redirect("/admin/orders");
   } catch (error) {
     res.status(500).send(error.message);
@@ -431,13 +431,13 @@ app.get("/admin/stock", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    
+
     const StockUpdate = require("./models/StockUpdate");
     const totalStockUpdates = await StockUpdate.countDocuments();
     const stockUpdates = await StockUpdate.find().populate("product").sort({ date: -1 }).skip(skip).limit(limit);
     const products = await require("./models/Product").find();
     const totalPages = Math.ceil(totalStockUpdates / limit);
-    
+
     res.render("admin/stock", { stockUpdates, products, currentPage: page, totalPages });
   } catch (error) {
     res.status(500).send(error.message);
@@ -465,7 +465,9 @@ app.post("/admin/stock", async (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
+const port = process.env.PORT || 3000
+
 // Start Server
-app.listen(5001, () => {
-  console.log("Server Connected on port: 5001");
+app.listen(port, () => {
+  console.log("Server Connected on port:", port);
 });
