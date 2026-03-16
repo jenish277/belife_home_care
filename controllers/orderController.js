@@ -2,7 +2,7 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Invoice = require("../models/Invoice");
-const whatsappService = require("../services/whatsappService");
+// const whatsappService = require("../services/whatsappService");
 const invoiceService = require("../services/invoiceService");
 const smsService = require("../services/smsService");
 

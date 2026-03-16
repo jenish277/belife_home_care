@@ -1,64 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Belife Home Care  </title>
+    <title>Products - Belife Home Care </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/mobile.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f5f7fa; }
-        .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: #1e293b; padding: 20px 0; z-index: 1000; }
-        .sidebar-brand { padding: 0 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-brand h4 { color: #fff; font-weight: 700; margin: 0; }
-        .sidebar-menu { list-style: none; padding: 20px 0; }
-        .sidebar-menu li a { display: flex; align-items: center; padding: 12px 20px; color: #94a3b8; text-decoration: none; transition: all 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        .sidebar-menu li a i { width: 20px; margin-right: 12px; }
-        .main-content { margin-left: 260px; padding: 30px; }
-        .top-bar { background: #fff; padding: 20px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .top-bar h2 { margin: 0; color: #1e293b; font-weight: 700; }
-        .btn-primary { background: #3b82f6; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 500; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-warning { background: #f59e0b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .btn-danger { background: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; }
-        .table { margin: 0; }
-        .table thead th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 13px; text-transform: uppercase; border: none; padding: 15px; }
-        .table tbody td { padding: 15px; color: #334155; vertical-align: middle; border-color: #f1f5f9; }
-        .table tbody tr:hover { background: #f8fafc; }
-        .badge { padding: 6px 12px; font-weight: 500; font-size: 12px; }
-        .pagination-container { display: flex; justify-content: center; align-items: center; padding: 25px 20px; background: #fff; border-top: 2px solid #f1f5f9; gap: 20px; }
-        .pagination { display: flex; gap: 8px; margin: 0; list-style: none; padding: 0; }
-        .pagination .page-item { list-style: none; }
-        .pagination .page-link { display: flex; align-items: center; justify-content: center; min-width: 42px; height: 42px; padding: 0 14px; border: none; border-radius: 10px; background: #f8fafc; color: #64748b; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
-        .pagination .page-link:hover { background: #3b82f6; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
-        .pagination .page-item.active .page-link { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transform: scale(1.05); }
-        .pagination .page-item.disabled .page-link { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; pointer-events: none; box-shadow: none; }
-        .page-info { color: #64748b; font-size: 14px; font-weight: 600; padding: 10px 18px; background: #f8fafc; border-radius: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
-        .modal-content { border-radius: 12px; border: none; }
-        .modal-header { border-bottom: 1px solid #e2e8f0; }
-        .form-label { font-weight: 500; color: #475569; margin-bottom: 8px; }
-        .form-control { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; }
-        .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #1e293b;
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h4 {
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .sidebar-menu li a i {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            border: none;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            color: #334155;
+            vertical-align: middle;
+            border-color: #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px 20px;
+            background: #fff;
+            border-top: 2px solid #f1f5f9;
+            gap: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+            margin: 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination .page-item {
+            list-style: none;
+        }
+
+        .pagination .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            height: 42px;
+            padding: 0 14px;
+            border: none;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .pagination .page-link:hover {
+            background: #3b82f6;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transform: scale(1.05);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background: #f1f5f9;
+            color: #cbd5e1;
+            cursor: not-allowed;
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        .page-info {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 18px;
+            background: #f8fafc;
+            border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
         @media (max-width: 768px) {
-            .main-content { margin-left: 0; padding: 10px; padding-top: 70px; }
-            .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 12px 15px; margin-bottom: 0; border-radius: 0; z-index: 998; flex-direction: column; gap: 10px; }
-            .top-bar h2 { font-size: 1.2rem; }
-            .top-bar .btn { width: 100%; }
-            .card.mb-3 { margin-top: 70px !important; }
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+                padding-top: 70px;
+            }
+
+            .top-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 12px 15px;
+                margin-bottom: 0;
+                border-radius: 0;
+                z-index: 998;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .top-bar h2 {
+                font-size: 1.2rem;
+            }
+
+            .top-bar .btn {
+                width: 100%;
+            }
+
+            .card.mb-3 {
+                margin-top: 70px !important;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <h4><i class="fas fa-home me-2"></i>Belife Home Care  </h4>
+            <h4><i class="fas fa-home me-2"></i>Belife Home Care </h4>
         </div>
         <ul class="sidebar-menu">
             <li><a href="/"><i class="fas fa-chart-line"></i>Dashboard</a></li>
@@ -72,7 +308,8 @@
     <div class="main-content">
         <div class="top-bar">
             <h2>Products Management</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="fas fa-plus me-2"></i>Add Product</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
+                    class="fas fa-plus me-2"></i>Add Product</button>
         </div>
 
         <div class="card mb-3">
@@ -93,19 +330,29 @@
                         </tr>
                     </thead>
                     <tbody id="productsTableBody">
-                        <% products.forEach(product => { %>
-                        <tr>
-                            <td><strong><%= product.name %></strong></td>
-                            <td>₹<%= product.price %></td>
-                            <td><span class="badge <%= product.availableQuantity < 10 ? 'bg-danger' : 'bg-success' %>"><%= product.availableQuantity %></span></td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editProduct('<%= product._id %>', '<%= product.name %>', '<%= product.price %>', '<%= product.availableQuantity %>')"><i class="fas fa-edit"></i></button>
-                                <form action="/admin/products/delete/<%= product._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% }) %>
+                        <% products.forEach(product=> { %>
+                            <tr>
+                                <td><strong>
+                                        <%= product.name %>
+                                    </strong></td>
+                                <td>₹<%= product.price %>
+                                </td>
+                                <td><span
+                                        class="badge <%= product.availableQuantity < 10 ? 'bg-danger' : 'bg-success' %>">
+                                        <%= product.availableQuantity %>
+                                    </span></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm"
+                                        onclick="editProduct('<%= product._id %>', '<%= product.name %>', '<%= product.price %>')"><i
+                                            class="fas fa-edit"></i></button>
+                                    <form action="/admin/products/delete/<%= product._id %>" method="POST"
+                                        style="display:inline;" onsubmit="return confirmDelete(this)">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
                     </tbody>
                 </table>
             </div>
@@ -130,10 +377,6 @@
                         <div class="mb-3">
                             <label class="form-label">Price</label>
                             <input type="number" name="price" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" name="availableQuantity" class="form-control" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -162,10 +405,6 @@
                             <label class="form-label">Price</label>
                             <input type="number" name="price" id="editPrice" class="form-control" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" name="availableQuantity" id="editQuantity" class="form-control" required>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Update</button>
@@ -180,7 +419,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center py-4">
@@ -207,25 +447,24 @@
             return false;
         }
 
-        document.getElementById('confirmDelete').addEventListener('click', function() {
+        document.getElementById('confirmDelete').addEventListener('click', function () {
             if (deleteForm) {
                 deleteForm.submit();
             }
         });
-        
-        function editProduct(id, name, price, quantity) {
+
+        function editProduct(id, name, price) {
             document.getElementById('editForm').action = '/admin/products/update/' + id;
             document.getElementById('editName').value = name;
             document.getElementById('editPrice').value = price;
-            document.getElementById('editQuantity').value = quantity;
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
 
         // Search functionality
-        document.getElementById('searchProduct').addEventListener('input', function() {
+        document.getElementById('searchProduct').addEventListener('input', function () {
             const searchTerm = this.value.toLowerCase();
             const rows = document.querySelectorAll('#productsTableBody tr');
-            
+
             rows.forEach(row => {
                 const productName = row.querySelector('td:first-child').textContent.toLowerCase();
                 if (productName.includes(searchTerm)) {
@@ -237,4 +476,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 // Initialize WhatsApp service
-const whatsappService = require('./services/whatsappService');
+// const whatsappService = require('./services/whatsappService');
 
 // Middleware
 app.use(cors());
@@ -21,6 +21,7 @@ const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const stockRoutes = require("./routes/stockRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const { startNightlyReportJob, sendDailyReport, sendWeeklyReport, sendMonthlyReport } = require("./services/nightlyReportService");
 
 // Import middleware
 const authMiddleware = require("./middleware/authMiddleware");
@@ -30,7 +31,10 @@ const errorHandler = require("./middleware/errorHandler");
 const dbURI = process.env.MONGO_URL
 mongoose
   .connect(dbURI)
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => {
+    console.log("Connected to MongoDB");
+    startNightlyReportJob();
+  })
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
 // Routes with auth
@@ -166,7 +170,11 @@ app.get("/admin/products", async (req, res) => {
 app.post("/admin/products", async (req, res) => {
   try {
     const Product = require("./models/Product");
-    await Product.create(req.body);
+    await Product.create({
+      name: req.body.name,
+      price: req.body.price,
+      availableQuantity: 0
+    });
     res.redirect("/admin/products");
   } catch (error) {
     res.status(500).send(error.message);
@@ -176,7 +184,10 @@ app.post("/admin/products", async (req, res) => {
 app.post("/admin/products/update/:id", async (req, res) => {
   try {
     const Product = require("./models/Product");
-    await Product.findByIdAndUpdate(req.params.id, req.body);
+    await Product.findByIdAndUpdate(req.params.id, {
+      name: req.body.name,
+      price: req.body.price
+    });
     res.redirect("/admin/products");
   } catch (error) {
     res.status(500).send(error.message);
@@ -367,7 +378,7 @@ app.post("/admin/orders", async (req, res) => {
     const phoneWithCountryCode = user.phoneNumber.startsWith('+91') ? user.phoneNumber : '+91' + user.phoneNumber;
     const message = `🛒 *Order Confirmation*\n\nHi ${user.name}!\n\n📦 Products:\n${productDetails.join('\n')}\n\n💰 Subtotal: ₹${subtotal}\n🎯 Discount: ₹${discount}\n💳 Total: ₹${total}\n\nThank you for your order!\n\n*BeLife Home Care*`;
 
-    whatsappService.sendBill(phoneWithCountryCode, message);
+    // whatsappService.sendBill(phoneWithCountryCode, message);
 
     res.redirect("/admin/orders");
   } catch (error) {
@@ -378,6 +389,21 @@ app.post("/admin/orders", async (req, res) => {
 app.post("/admin/orders/delete/:id", async (req, res) => {
   try {
     const Order = require("./models/Order");
+    const Product = require("./models/Product");
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    for (const item of order.products) {
+      const product = await Product.findById(item.product);
+      if (product) {
+        product.availableQuantity += Number(item.quantity);
+        await product.save();
+      }
+    }
+
     await Order.findByIdAndDelete(req.params.id);
     res.redirect("/admin/orders");
   } catch (error) {
@@ -390,6 +416,11 @@ app.post("/admin/orders/update/:id", async (req, res) => {
     const Order = require("./models/Order");
     const Product = require("./models/Product");
     const User = require("./models/User");
+    const existingOrder = await Order.findById(req.params.id);
+
+    if (!existingOrder) {
+      return res.status(404).send("Order not found");
+    }
 
     let user = await User.findOne({ phoneNumber: req.body.customerPhone });
     if (!user) {
@@ -404,15 +435,49 @@ app.post("/admin/orders/update/:id", async (req, res) => {
       await user.save();
     }
 
+    for (const item of existingOrder.products) {
+      const oldProduct = await Product.findById(item.product);
+      if (oldProduct) {
+        oldProduct.availableQuantity += Number(item.quantity);
+        await oldProduct.save();
+      }
+    }
+
+    const quantity = parseInt(req.body.quantity, 10);
     const product = await Product.findById(req.body.productId);
-    const subtotal = product.price * req.body.quantity;
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    if (product.availableQuantity < quantity) {
+      for (const item of existingOrder.products) {
+        const oldProduct = await Product.findById(item.product);
+        if (oldProduct) {
+          oldProduct.availableQuantity -= Number(item.quantity);
+          await oldProduct.save();
+        }
+      }
+
+      return res.status(400).send(`
+        <script>
+          alert('Insufficient stock for ${product.name}! Available: ${product.availableQuantity}, Requested: ${quantity}');
+          window.history.back();
+        </script>
+      `);
+    }
+
+    product.availableQuantity -= quantity;
+    await product.save();
+
+    const subtotal = product.price * quantity;
     const discount = parseFloat(req.body.discount) || 0;
     const pending = parseFloat(req.body.pending) || 0;
     const total = subtotal - discount;
 
     await Order.findByIdAndUpdate(req.params.id, {
       user: user._id,
-      products: [{ product: req.body.productId, quantity: req.body.quantity, price: product.price }],
+      products: [{ product: req.body.productId, quantity, price: product.price }],
       total: total,
       discount: discount,
       pending: pending,
@@ -425,7 +490,19 @@ app.post("/admin/orders/update/:id", async (req, res) => {
   }
 });
 
-// Admin Stock Page
+// Admin Test Reports Route
+app.get("/admin/test-reports", async (req, res) => {
+  try {
+    console.log("Manually triggering all reports for testing...");
+    await sendDailyReport();
+    await sendWeeklyReport();
+    await sendMonthlyReport();
+    res.send("All reports sent successfully for testing!");
+  } catch (error) {
+    console.error("Error sending test reports:", error);
+    res.status(500).send("Error sending reports: " + error.message);
+  }
+});
 app.get("/admin/stock", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
