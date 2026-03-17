@@ -168,11 +168,23 @@ app.get("/admin/products", async (req, res) => {
     const skip = (page - 1) * limit;
 
     const Product = require("./models/Product");
+    const StockUpdate = require("./models/StockUpdate");
     const totalProducts = await Product.countDocuments();
     const products = await Product.find().skip(skip).limit(limit);
     const totalPages = Math.ceil(totalProducts / limit);
+    
+    // Get recent stock updates for display
+    const stockUpdates = await StockUpdate.find()
+      .populate("product")
+      .sort({ date: -1 })
+      .limit(5);
 
-    res.render("admin/products", { products, currentPage: page, totalPages });
+    res.render("admin/products", { 
+      products, 
+      stockUpdates, 
+      currentPage: page, 
+      totalPages 
+    });
   } catch (error) {
     res.status(500).send(error.message);
   }
