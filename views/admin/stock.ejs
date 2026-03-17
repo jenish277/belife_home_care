@@ -1,3 +1,9 @@
+<%
+    const safeStockUpdates = Array.isArray(stockUpdates) ? stockUpdates : [];
+    const safeProducts = Array.isArray(products) ? products : [];
+    const pageNumber = Number.isInteger(currentPage) && currentPage > 0 ? currentPage : 1;
+    const pageCount = Number.isInteger(totalPages) && totalPages > 0 ? totalPages : 1;
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,21 +88,38 @@
                             <th>Quantity Added</th>
                             <th>Date</th>
                             <th>Notes</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% stockUpdates.forEach(update => { %>
+                        <% safeStockUpdates.forEach(update => { %>
                         <tr>
-                            <td><strong><%= update.product.name %></strong></td>
+                            <td><strong><%= update?.product ? update?.product?.name : 'Deleted Product' %></strong></td>
                             <td><span class="badge bg-success">+<%= update.quantityAdded %></span></td>
-                            <td><%= update.date.toDateString() %></td>
+                            <td><%= update.date ? new Date(update.date).toDateString() : 'N/A' %></td>
                             <td><%= update.notes || 'N/A' %></td>
+                            <td>
+                                <button
+                                    class="btn btn-warning btn-sm"
+                                    type="button"
+                                    onclick="editStock(this)"
+                                    data-id="<%= update._id %>"
+                                    data-product-id="<%= update.product ? update.product._id : '' %>"
+                                    data-quantity="<%= update.quantityAdded %>"
+                                    data-notes="<%= update.notes || '' %>"
+                                    <%= update.product ? '' : 'disabled' %>>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form action="/admin/stock/delete/<%= update._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
                         </tr>
                         <% }) %>
                     </tbody>
                 </table>
             </div>
-            <%- include('pagination', { currentPage, totalPages }) %>
+            <%- include('pagination', { currentPage: pageNumber, totalPages: pageCount }) %>
         </div>
     </div>
 
@@ -114,7 +137,7 @@
                             <label class="form-label">Product</label>
                             <select name="productId" class="form-select" required>
                                 <option value="">Select Product</option>
-                                <% products.forEach(product => { %>
+                                <% safeProducts.forEach(product => { %>
                                 <option value="<%= product._id %>"><%= product.name %> (Current: <%= product.availableQuantity %>)</option>
                                 <% }) %>
                             </select>
@@ -136,7 +159,89 @@
         </div>
     </div>
 
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editForm" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Stock</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Product</label>
+                            <select name="productId" id="editProductId" class="form-select" required>
+                                <option value="">Select Product</option>
+                                <% safeProducts.forEach(product => { %>
+                                <option value="<%= product._id %>">
+                                    <%= product.name %> (Current: <%= product.availableQuantity %>)
+                                </option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity Added</label>
+                            <input type="number" name="quantityAdded" id="editQuantityAdded" class="form-control" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes (Optional)</label>
+                            <textarea name="notes" id="editNotes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-trash-alt text-danger" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <h5 class="mt-3 mb-2">Are you sure?</h5>
+                    <p class="text-muted mb-0">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/mobile.js"></script>
+    <script>
+        let deleteForm = null;
+
+        function confirmDelete(form) {
+            deleteForm = form;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            return false;
+        }
+
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            if (deleteForm) {
+                deleteForm.submit();
+            }
+        });
+
+        function editStock(button) {
+            document.getElementById('editForm').action = '/admin/stock/update/' + button.dataset.id;
+            document.getElementById('editProductId').value = button.dataset.productId || '';
+            document.getElementById('editQuantityAdded').value = button.dataset.quantity || '';
+            document.getElementById('editNotes').value = button.dataset.notes || '';
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+    </script>
 </body>
 </html>

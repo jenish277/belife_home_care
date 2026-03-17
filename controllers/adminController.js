@@ -104,9 +104,25 @@ exports.addOrder = async (req, res) => {
 // Stock
 exports.getStock = async (req, res) => {
   try {
-    const stockUpdates = await StockUpdate.find().populate("product");
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const totalStockUpdates = await StockUpdate.countDocuments();
+    const stockUpdates = await StockUpdate.find()
+      .populate("product")
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
     const products = await Product.find();
-    res.render("admin/stock", { stockUpdates, products });
+    const totalPages = Math.max(1, Math.ceil(totalStockUpdates / limit));
+
+    res.render("admin/stock", {
+      stockUpdates,
+      products,
+      currentPage: page,
+      totalPages
+    });
   } catch (error) {
     res.status(500).send(error.message);
   }
