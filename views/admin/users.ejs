@@ -251,7 +251,7 @@
         
         function viewHistory(userId) {
             const user = usersData.find(u => u._id === userId);
-            let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Products</th><th>Total</th></tr></thead><tbody>';
+            let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Products</th><th>Payment Mode</th><th>Pending</th><th>Total</th></tr></thead><tbody>';
             
             user.orders.forEach(order => {
                 html += '<tr>';
@@ -261,6 +261,32 @@
                     html += '<div><span class="badge bg-primary">' + item.product.name + '</span> Qty: ' + item.quantity + '</div>';
                 });
                 html += '</td>';
+                
+                // Add payment mode with badge styling
+                const paymentMethod = order.paymentMethod || 'Cash';
+                let paymentBadge = '';
+                if (paymentMethod === 'GPay') {
+                    paymentBadge = '<span class="badge bg-success">GPay</span>';
+                } else if (paymentMethod === 'Pending') {
+                    paymentBadge = '<span class="badge bg-warning">Pending</span>';
+                } else {
+                    paymentBadge = '<span class="badge bg-secondary">Cash</span>';
+                }
+                html += '<td>' + paymentBadge + '</td>';
+                
+                // Calculate and display pending amount
+                let pendingAmount = 0;
+                if (paymentMethod === 'Pending') {
+                    pendingAmount = order.total;
+                }
+                pendingAmount += (order.pending || 0);
+                
+                if (pendingAmount > 0) {
+                    html += '<td><strong style="color: #ef4444;">₹' + pendingAmount + '</strong></td>';
+                } else {
+                    html += '<td><span class="text-muted">-</span></td>';
+                }
+                
                 html += '<td><strong>₹' + order.total + '</strong></td>';
                 html += '</tr>';
             });

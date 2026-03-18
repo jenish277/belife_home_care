@@ -493,43 +493,62 @@ app.post("/admin/orders/update/:id", async (req, res) => {
       }
     }
 
-    const quantity = parseInt(req.body.quantity, 10);
-    const product = await Product.findById(req.body.productId);
-
-    if (!product) {
-      return res.status(404).send("Product not found");
+    // Handle multiple products
+    const productIds = req.body.productId || [];
+    const quantities = req.body.quantity || [];
+    
+    if (!Array.isArray(productIds)) {
+      // Handle single product case (backward compatibility)
+      productIds = [req.body.productId];
+      quantities = [req.body.quantity];
     }
+    
+    const products = [];
+    let subtotal = 0;
 
-    if (product.availableQuantity < quantity) {
-      for (const item of existingOrder.products) {
-        const oldProduct = await Product.findById(item.product);
-        if (oldProduct) {
-          oldProduct.availableQuantity -= Number(item.quantity);
-          await oldProduct.save();
-        }
+    for (let i = 0; i < productIds.length; i++) {
+      const productId = productIds[i];
+      const quantity = parseInt(quantities[i], 10);
+      
+      if (!productId || !quantity) continue;
+      
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).send("Product not found");
       }
 
-      return res.status(400).send(`
-        <script>
-          alert('Insufficient stock for ${product.name}! Available: ${product.availableQuantity}, Requested: ${quantity}');
-          window.history.back();
-        </script>
-      `);
+      if (product.availableQuantity < quantity) {
+        // Restore original stock quantities
+        for (const item of existingOrder.products) {
+          const oldProduct = await Product.findById(item.product);
+          if (oldProduct) {
+            oldProduct.availableQuantity -= Number(item.quantity);
+            await oldProduct.save();
+          }
+        }
+
+        return res.status(400).send(`
+          <script>
+            alert('Insufficient stock for ${product.name}! Available: ${product.availableQuantity}, Requested: ${quantity}');
+            window.history.back();
+          </script>
+        `);
+      }
+
+      product.availableQuantity -= quantity;
+      await product.save();
+      
+      products.push({ product: productId, quantity, price: product.price });
+      subtotal += product.price * quantity;
     }
 
-    product.availableQuantity -= quantity;
-    await product.save();
-
-    const subtotal = product.price * quantity;
     const discount = parseFloat(req.body.discount) || 0;
     const pending = parseFloat(req.body.pending) || 0;
     const total = subtotal - discount;
 
     await Order.findByIdAndUpdate(req.params.id, {
       user: user._id,
-      products: [
-        { product: req.body.productId, quantity, price: product.price },
-      ],
+      products: products,
       total: total,
       discount: discount,
       pending: pending,

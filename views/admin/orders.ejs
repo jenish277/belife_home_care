@@ -176,7 +176,17 @@
                             <td><strong>₹<%= order.total %></strong></td>
                             <td><%= order.orderDate.toDateString() %></td>
                             <td>
-                                <button class="btn btn-warning btn-sm" onclick="editOrder('<%= order._id %>', '<%= order.user.name %>', '<%= order.user.phoneNumber %>', '<%= order.user.address %>', '<%= order.products[0].product._id %>', '<%= order.products[0].quantity %>', '<%= order.discount || 0 %>')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-warning btn-sm edit-order-btn" 
+                                data-id="<%= order._id %>" 
+                                data-name="<%= order.user.name %>" 
+                                data-phone="<%= order.user.phoneNumber %>" 
+                                data-address="<%= order.user.address %>" 
+                                data-products='<%= JSON.stringify(order.products.map(p => ({productId: p.product._id, quantity: p.quantity}))) %>'
+                                data-discount="<%= order.discount || 0 %>" 
+                                data-payment="<%= order.paymentMethod || 'Cash' %>" 
+                                data-pending="<%= order.pending || 0 %>">
+                                <i class="fas fa-edit"></i>
+                            </button>
                                 <form action="/admin/orders/delete/<%= order._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -289,17 +299,28 @@
                             <textarea name="customerAddress" id="editCustomerAddress" class="form-control" rows="2" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Product</label>
-                            <select name="productId" class="form-select" id="editProductSelect" required>
-                                <option value="">Select Product</option>
-                                <% products.forEach(product => { %>
-                                <option value="<%= product._id %>" data-price="<%= product.price %>"><%= product.name %> - ₹<%= product.price %></option>
-                                <% }) %>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" name="quantity" id="editQuantity" class="form-control" min="1" required>
+                            <label class="form-label">Products</label>
+                            <div id="editProductsList">
+                                <div class="product-row mb-2">
+                                    <div class="row g-2">
+                                        <div class="col-8">
+                                            <select name="productId" class="form-select product-select" required>
+                                                <option value="">Select Product</option>
+                                                <% products.forEach(product => { %>
+                                                <option value="<%= product._id %>" data-price="<%= product.price %>"><%= product.name %> - ₹<%= product.price %> (Stock: <%= product.availableQuantity %>)</option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="number" name="quantity" class="form-control quantity-input" placeholder="Qty" min="1" required>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="button" class="btn btn-danger btn-sm remove-product" style="display:none;"><i class="fas fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addEditProduct"><i class="fas fa-plus me-1"></i>Add Product</button>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Discount (₹)</label>
@@ -455,7 +476,17 @@
                         <td><strong>₹${order.total}</strong></td>
                         <td>${new Date(order.orderDate).toDateString()}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" onclick="editOrder('${order._id}', '${order.user.name}', '${order.user.phoneNumber}', '${order.user.address}', '${order.products[0].product._id}', '${order.products[0].quantity}', '${order.discount || 0}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-warning btn-sm edit-order-btn" 
+                                data-id="${order._id}" 
+                                data-name="${order.user.name}" 
+                                data-phone="${order.user.phoneNumber}" 
+                                data-address="${order.user.address}" 
+                                data-products='${JSON.stringify(order.products.map(p => ({productId: p.product._id, quantity: p.quantity})))}'
+                                data-discount="${order.discount || 0}" 
+                                data-payment="${order.paymentMethod || 'Cash'}" 
+                                data-pending="${order.pending || 0}">
+                                <i class="fas fa-edit"></i>
+                            </button>
                             <form action="/admin/orders/delete/${order._id}" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
                                 <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                             </form>
@@ -596,14 +627,147 @@
         quantityInput.addEventListener('input', calculateTotal);
         discountInput.addEventListener('input', calculateTotal);
         
-        function editOrder(id, name, phone, address, productId, quantity, discount) {
+        // Add product functionality for edit modal
+        document.getElementById('addEditProduct').addEventListener('click', function() {
+            const productsList = document.getElementById('editProductsList');
+            const newRow = document.createElement('div');
+            newRow.className = 'product-row mb-2';
+            newRow.innerHTML = `
+                <div class="row g-2">
+                    <div class="col-8">
+                        <select name="productId" class="form-select product-select" required>
+                            <option value="">Select Product</option>
+                            <% products.forEach(product => { %>
+                            <option value="<%= product._id %>" data-price="<%= product.price %>"><%= product.name %> - ₹<%= product.price %> (Stock: <%= product.availableQuantity %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input type="number" name="quantity" class="form-control quantity-input" placeholder="Qty" min="1" required>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            `;
+            productsList.appendChild(newRow);
+            
+            // Add event listeners
+            const productSelect = newRow.querySelector('.product-select');
+            const quantityInput = newRow.querySelector('.quantity-input');
+            const removeBtn = newRow.querySelector('.remove-product');
+            
+            productSelect.addEventListener('change', calculateEditTotal);
+            quantityInput.addEventListener('input', calculateEditTotal);
+            removeBtn.addEventListener('click', function() {
+                newRow.remove();
+                calculateEditTotal();
+                updateEditRemoveButtons();
+            });
+            
+            updateEditRemoveButtons();
+        });
+        
+        function updateEditRemoveButtons() {
+            const rows = document.querySelectorAll('#editProductsList .product-row');
+            rows.forEach((row, index) => {
+                const removeBtn = row.querySelector('.remove-product');
+                removeBtn.style.display = rows.length > 1 ? 'block' : 'none';
+            });
+        }
+        
+        function calculateEditTotal() {
+            let subtotal = 0;
+            
+            document.querySelectorAll('#editProductsList .product-row').forEach(row => {
+                const select = row.querySelector('.product-select');
+                const qtyInput = row.querySelector('.quantity-input');
+                
+                if (select.value && qtyInput.value) {
+                    const price = parseFloat(select.options[select.selectedIndex].dataset.price) || 0;
+                    const quantity = parseInt(qtyInput.value) || 0;
+                    subtotal += price * quantity;
+                }
+            });
+            
+            const discountInput = document.getElementById('editDiscount');
+            const discount = parseFloat(discountInput.value) || 0;
+            const total = subtotal - discount;
+        }
+
+        // Event listener for edit buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.edit-order-btn')) {
+                const btn = e.target.closest('.edit-order-btn');
+                const id = btn.getAttribute('data-id');
+                const name = btn.getAttribute('data-name');
+                const phone = btn.getAttribute('data-phone');
+                const address = btn.getAttribute('data-address');
+                const productsData = btn.getAttribute('data-products');
+                const discount = btn.getAttribute('data-discount');
+                const paymentMethod = btn.getAttribute('data-payment');
+                const pending = btn.getAttribute('data-pending');
+                
+                editOrder(id, name, phone, address, productsData, discount, paymentMethod, pending);
+            }
+        });
+
+        // Update editOrder function to handle multiple products
+        function editOrder(id, name, phone, address, productsData, discount, paymentMethod, pending) {
             document.getElementById('editForm').action = '/admin/orders/update/' + id;
             document.getElementById('editCustomerName').value = name;
             document.getElementById('editCustomerPhone').value = phone;
             document.getElementById('editCustomerAddress').value = address;
-            document.getElementById('editProductSelect').value = productId;
-            document.getElementById('editQuantity').value = quantity;
-            document.getElementById('editDiscount').value = discount;
+            document.getElementById('editDiscount').value = discount || 0;
+            document.getElementById('editPaymentMethod').value = paymentMethod || 'Cash';
+            document.getElementById('editPending').value = pending || 0;
+            
+            // Parse products data and populate product rows
+            const products = JSON.parse(productsData);
+            const productsList = document.getElementById('editProductsList');
+            productsList.innerHTML = '';
+            
+            products.forEach((product, index) => {
+                const productRow = document.createElement('div');
+                productRow.className = 'product-row mb-2';
+                productRow.innerHTML = `
+                    <div class="row g-2">
+                        <div class="col-8">
+                            <select name="productId" class="form-select product-select" required>
+                                <option value="">Select Product</option>
+                                <% products.forEach(product => { %>
+                                <option value="<%= product._id %>" data-price="<%= product.price %>"><%= product.name %> - ₹<%= product.price %> (Stock: <%= product.availableQuantity %>)</option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" name="quantity" class="form-control quantity-input" placeholder="Qty" min="1" required>
+                        </div>
+                        <div class="col-1">
+                            <button type="button" class="btn btn-danger btn-sm remove-product" style="display:${products.length > 1 ? 'block' : 'none'}"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                `;
+                productsList.appendChild(productRow);
+                
+                // Set values
+                const productSelect = productRow.querySelector('.product-select');
+                const quantityInput = productRow.querySelector('.quantity-input');
+                productSelect.value = product.productId;
+                quantityInput.value = product.quantity;
+                
+                // Add event listeners
+                productSelect.addEventListener('change', calculateEditTotal);
+                quantityInput.addEventListener('input', calculateEditTotal);
+                
+                const removeBtn = productRow.querySelector('.remove-product');
+                removeBtn.addEventListener('click', function() {
+                    productRow.remove();
+                    calculateEditTotal();
+                    updateEditRemoveButtons();
+                });
+            });
+            
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
     </script>
