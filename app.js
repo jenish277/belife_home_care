@@ -207,10 +207,34 @@ app.post("/admin/products", async (req, res) => {
 app.post("/admin/products/update/:id", async (req, res) => {
   try {
     const Product = require("./models/Product");
+    const StockUpdate = require("./models/StockUpdate");
+    
+    const existingProduct = await Product.findById(req.params.id);
+    if (!existingProduct) {
+      return res.status(404).send("Product not found");
+    }
+
+    const newQuantity = parseInt(req.body.availableQuantity, 10);
+    const oldQuantity = existingProduct.availableQuantity || 0;
+    const quantityDifference = newQuantity - oldQuantity;
+
+    // Update product
     await Product.findByIdAndUpdate(req.params.id, {
       name: req.body.name,
       price: req.body.price,
+      availableQuantity: newQuantity
     });
+
+    // Create stock entry if quantity increased
+    if (quantityDifference > 0) {
+      await StockUpdate.create({
+        product: req.params.id,
+        quantityAdded: quantityDifference,
+        date: new Date(),
+        notes: `Product updated: ${req.body.name} - Stock increased by ${quantityDifference}`
+      });
+    }
+
     res.redirect("/admin/products");
   } catch (error) {
     res.status(500).send(error.message);

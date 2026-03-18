@@ -99,7 +99,7 @@
                             <td>₹<%= product.price %></td>
                             <td><span class="badge <%= product.availableQuantity < 10 ? 'bg-danger' : 'bg-success' %>"><%= product.availableQuantity %></span></td>
                             <td>
-                                <button class="btn btn-warning btn-sm" onclick="editProduct('<%= product._id %>', '<%= product.name %>', '<%= product.price %>')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-warning btn-sm" onclick="editProduct('<%= product._id %>', '<%= product.name %>', '<%= product.price %>', '<%= product.availableQuantity %>')"><i class="fas fa-edit"></i></button>
                                 <form action="/admin/products/delete/<%= product._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -158,6 +158,11 @@
                             <label class="form-label">Price</label>
                             <input type="number" name="price" id="editPrice" class="form-control" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Available Quantity</label>
+                            <input type="number" name="availableQuantity" id="editQuantity" class="form-control" min="0" required>
+                            <small class="text-muted">Update quantity to add stock entry</small>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Update</button>
@@ -205,10 +210,11 @@
             }
         });
         
-        function editProduct(id, name, price) {
+        function editProduct(id, name, price, quantity) {
             document.getElementById('editForm').action = '/admin/products/update/' + id;
             document.getElementById('editName').value = name;
             document.getElementById('editPrice').value = price;
+            document.getElementById('editQuantity').value = quantity;
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
 
