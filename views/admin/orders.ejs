@@ -36,14 +36,10 @@
         .form-control, .form-select { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; }
         .form-control:focus, .form-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         .alert-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; border-radius: 8px; }
-        .pagination-container { display: flex; justify-content: center; align-items: center; padding: 25px 20px; background: #fff; border-top: 2px solid #f1f5f9; gap: 20px; }
-        .pagination { display: flex; gap: 8px; margin: 0; list-style: none; padding: 0; }
-        .pagination .page-item { list-style: none; }
-        .pagination .page-link { display: flex; align-items: center; justify-content: center; min-width: 42px; height: 42px; padding: 0 14px; border: none; border-radius: 10px; background: #f8fafc; color: #64748b; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
-        .pagination .page-link:hover { background: #3b82f6; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
-        .pagination .page-item.active .page-link { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transform: scale(1.05); }
-        .pagination .page-item.disabled .page-link { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; pointer-events: none; box-shadow: none; }
-        .page-info { color: #64748b; font-size: 14px; font-weight: 600; padding: 10px 18px; background: #f8fafc; border-radius: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+        .table-responsive {
+            max-height: 500px;
+            overflow-y: auto;
+        }
         @media (max-width: 768px) {
             .main-content { margin-left: 0; padding: 10px; padding-top: 70px; }
             .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 12px 15px; margin-bottom: 0; border-radius: 0; z-index: 998; flex-direction: column; gap: 10px; }
@@ -97,7 +93,7 @@
                 <div class="card" style="border-left: 4px solid #ef4444;">
                     <div class="card-body">
                         <h6 class="text-muted mb-2">PENDING TOTAL</h6>
-                        <h3 class="mb-0" id="totalPendingAmount">₹<%= orders.reduce((sum, o) => sum + (o.pending || 0), 0) + orders.filter(o => o.paymentMethod === 'Pending').reduce((sum, o) => sum + o.total, 0) %></h3>
+                        <h3 class="mb-0" id="totalPendingAmount">₹<%= orders.reduce((sum, o) => (o.paymentMethod === 'Pending' ? sum + o.total : sum) + (o.pending || 0), 0) %></h3>
                     </div>
                 </div>
             </div>
@@ -196,7 +192,6 @@
                     </tbody>
                 </table>
             </div>
-            <%- include('pagination', { currentPage, totalPages }) %>
         </div>
     </div>
 
@@ -411,13 +406,45 @@
         function filterOrders() {
             const searchName = document.getElementById('searchName').value.toLowerCase();
             const filterPayment = document.getElementById('filterPayment').value;
+            const filterDate = document.getElementById('filterDate').value;
             const sortBy = document.getElementById('sortBy').value;
             
             filteredOrders = ordersData.filter(order => {
                 const nameMatch = order.user.name.toLowerCase().includes(searchName);
                 const paymentMatch = !filterPayment || order.paymentMethod === filterPayment;
                 
-                return nameMatch && paymentMatch;
+                // Date filtering
+                let dateMatch = true;
+                if (filterDate) {
+                    const orderDate = new Date(order.orderDate);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    switch (filterDate) {
+                        case 'today':
+                            const orderDay = new Date(orderDate);
+                            orderDay.setHours(0, 0, 0, 0);
+                            dateMatch = orderDay.getTime() === today.getTime();
+                            break;
+                        case 'week':
+                            const weekAgo = new Date(today);
+                            weekAgo.setDate(weekAgo.getDate() - 7);
+                            dateMatch = orderDate >= weekAgo;
+                            break;
+                        case 'month':
+                            const monthAgo = new Date(today);
+                            monthAgo.setMonth(monthAgo.getMonth() - 1);
+                            dateMatch = orderDate >= monthAgo;
+                            break;
+                        case 'year':
+                            const yearAgo = new Date(today);
+                            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+                            dateMatch = orderDate >= yearAgo;
+                            break;
+                    }
+                }
+                
+                return nameMatch && paymentMatch && dateMatch;
             });
             
             // Sort
@@ -504,13 +531,7 @@
         
         document.getElementById('searchName').addEventListener('input', filterOrders);
         document.getElementById('filterPayment').addEventListener('change', filterOrders);
-        document.getElementById('filterDate').addEventListener('change', function() {
-            const selectedFilter = this.value;
-            const url = new URL(window.location);
-            url.searchParams.set('dateFilter', selectedFilter);
-            url.searchParams.set('page', '1'); // Reset to first page
-            window.location.href = url.toString();
-        });
+        document.getElementById('filterDate').addEventListener('change', filterOrders);
         document.getElementById('sortBy').addEventListener('change', filterOrders);
         
         document.getElementById('addProduct').addEventListener('click', function() {

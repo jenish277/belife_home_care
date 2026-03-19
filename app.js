@@ -20,7 +20,6 @@ const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const stockRoutes = require("./routes/stockRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
 const {
   startNightlyReportJob,
   sendDailyReport,
@@ -47,7 +46,6 @@ app.use("/api/products", authMiddleware, productRoutes);
 app.use("/api/users", authMiddleware, userRoutes);
 app.use("/api/orders", authMiddleware, orderRoutes);
 app.use("/api/stock", authMiddleware, stockRoutes);
-app.use("/api/dashboard", authMiddleware, dashboardRoutes);
 
 // Dashboard view (for admin interface)
 app.get("/", async (req, res) => {
@@ -470,11 +468,27 @@ app.post("/admin/orders/delete/:id", async (req, res) => {
       return res.status(404).send("Order not found");
     }
 
+    // Restore stock for all products in the deleted order
+    console.log(`Restoring stock for order ${req.params.id}...`);
+    const StockUpdate = require("./models/StockUpdate");
+    
     for (const item of order.products) {
       const product = await Product.findById(item.product);
       if (product) {
+        const oldQuantity = product.availableQuantity;
         product.availableQuantity += Number(item.quantity);
         await product.save();
+        
+        // Create stock update entry for deleted order
+        await StockUpdate.create({
+          product: product._id,
+          quantityAdded: Number(item.quantity),
+          notes: `Stock restored from deleted order #${order._id} - Customer: ${order.user?.name || 'Unknown'}`
+        });
+        
+        console.log(`Restored ${item.quantity} units of ${product.name} (Stock: ${oldQuantity} → ${product.availableQuantity})`);
+      } else {
+        console.log(`Warning: Product ${item.product} not found for stock restoration`);
       }
     }
 
@@ -518,8 +532,8 @@ app.post("/admin/orders/update/:id", async (req, res) => {
     }
 
     // Handle multiple products
-    const productIds = req.body.productId || [];
-    const quantities = req.body.quantity || [];
+    let productIds = req.body.productId || [];
+    let quantities = req.body.quantity || [];
     
     if (!Array.isArray(productIds)) {
       // Handle single product case (backward compatibility)
