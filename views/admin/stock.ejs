@@ -1,8 +1,6 @@
 <%
     const safeStockUpdates = Array.isArray(stockUpdates) ? stockUpdates : [];
     const safeProducts = Array.isArray(products) ? products : [];
-    const pageNumber = Number.isInteger(currentPage) && currentPage > 0 ? currentPage : 1;
-    const pageCount = Number.isInteger(totalPages) && totalPages > 0 ? totalPages : 1;
 %>
 
 <!DOCTYPE html>

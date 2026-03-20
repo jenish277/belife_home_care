@@ -161,29 +161,26 @@ app.get("/", async (req, res) => {
 // Admin Products Page
 app.get("/admin/products", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
     const Product = require("./models/Product");
     const StockUpdate = require("./models/StockUpdate");
-    const totalProducts = await Product.countDocuments();
-    const products = await Product.find().skip(skip).limit(limit);
-    const totalPages = Math.ceil(totalProducts / limit);
+    
+    // Get all products without pagination
+    const products = await Product.find();
+    const totalProducts = products.length;
     
     // Get recent stock updates for display
     const stockUpdates = await StockUpdate.find()
-      .populate("product")
+      .populate('product', 'name')
       .sort({ date: -1 })
       .limit(5);
 
     res.render("admin/products", { 
       products, 
       stockUpdates, 
-      currentPage: page, 
-      totalPages 
+      totalProducts
     });
   } catch (error) {
+    console.error('Products page error:', error);
     res.status(500).send(error.message);
   }
 });
@@ -252,14 +249,11 @@ app.post("/admin/products/delete/:id", async (req, res) => {
 // Admin Users Page
 app.get("/admin/users", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
     const User = require("./models/User");
     const Order = require("./models/Order");
-    const totalUsers = await User.countDocuments();
-    const users = await User.find().skip(skip).limit(limit);
+    
+    // Get all users without pagination
+    const users = await User.find();
 
     const usersWithOrders = await Promise.all(
       users.map(async (user) => {
@@ -287,11 +281,8 @@ app.get("/admin/users", async (req, res) => {
       }),
     );
 
-    const totalPages = Math.ceil(totalUsers / limit);
     res.render("admin/users", {
       users: usersWithOrders,
-      currentPage: page,
-      totalPages,
     });
   } catch (error) {
     res.status(500).send(error.message);
@@ -339,28 +330,20 @@ app.post("/admin/users/delete/:id", async (req, res) => {
 // Admin Orders Page
 app.get("/admin/orders", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
     const Order = require("./models/Order");
-    const totalOrders = await Order.countDocuments();
+    
+    // Get all orders without pagination
     const orders = await Order.find()
       .populate("user")
       .populate("products.product")
-      .sort({ orderDate: -1 })
-      .skip(skip)
-      .limit(limit);
+      .sort({ orderDate: -1 });
     const users = await require("./models/User").find();
     const products = await require("./models/Product").find();
-    const totalPages = Math.ceil(totalOrders / limit);
 
     res.render("admin/orders", {
       orders,
       users,
       products,
-      currentPage: page,
-      totalPages,
     });
   } catch (error) {
     res.status(500).send(error.message);
@@ -612,33 +595,27 @@ app.get("/admin/test-reports", async (req, res) => {
     res.status(500).send("Error sending reports: " + error.message);
   }
 });
+
 app.get("/admin/stock", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
     const StockUpdate = require("./models/StockUpdate");
-    const totalStockUpdates = await StockUpdate.countDocuments();
+    
+    // Get all stock updates without pagination
     const stockUpdates = await StockUpdate.find()
-      .populate("product")
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(limit);
+      .populate('product', 'name')
+      .sort({ date: -1 });
     const products = await require("./models/Product").find();
-    const totalPages = Math.ceil(totalStockUpdates / limit);
 
     res.render("admin/stock", {
       stockUpdates,
       products,
-      currentPage: page,
-      totalPages,
     });
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
 
+// ... (rest of the code remains the same)
 async function applyStockAdjustment({
   previousUpdate = null,
   nextProductId = null,
