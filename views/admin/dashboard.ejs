@@ -787,23 +787,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (productSales.length> 0) { %>
-                            <% productSales.forEach(product=> { %>
-                                <tr>
-                                    <td><strong>
-                                            <%= product.name %>
-                                        </strong></td>
-                                    <td><span class="badge bg-info">
-                                            <%= product.quantity %> units
-                                        </span></td>
-                                    <td><strong>₹<%= product.totalSales %></strong></td>
-                                </tr>
-                                <% }) %>
-                                    <% } else { %>
-                                        <tr>
-                                            <td colspan="3" class="text-center">No sales data available</td>
-                                        </tr>
-                                        <% } %>
+                        <% productSales.forEach(product => { %>
+                        <tr>
+                            <td><strong><%= product.name %></strong></td>
+                            <td><span class="badge bg-info"><%= product.quantity %> units</span></td>
+                            <td><strong>₹<%= product.totalSales %></strong></td>
+                        </tr>
+                        <% }) %>
                     </tbody>
                     <tfoot style="background: #f8fafc; border-top: 2px solid #e2e8f0;">
                         <tr>

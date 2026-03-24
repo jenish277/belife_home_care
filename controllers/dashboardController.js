@@ -67,17 +67,17 @@ exports.getDashboard = async (req, res) => {
       0,
     );
 
-    // Calculate product-wise sales
+    // Calculate product-wise sales (include all products even with 0 orders)
     const productSalesMap = {};
+    products.forEach((p) => {
+      productSalesMap[p._id.toString()] = { name: p.name, quantity: 0, totalSales: 0 };
+    });
     allOrders.forEach((order) => {
       order.products.forEach((item) => {
+        if (!item.product) return;
         const productId = item.product._id.toString();
         if (!productSalesMap[productId]) {
-          productSalesMap[productId] = {
-            name: item.product.name,
-            quantity: 0,
-            totalSales: 0,
-          };
+          productSalesMap[productId] = { name: item.product.name, quantity: 0, totalSales: 0 };
         }
         productSalesMap[productId].quantity += item.quantity;
         productSalesMap[productId].totalSales += item.price * item.quantity;

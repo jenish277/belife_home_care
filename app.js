@@ -91,51 +91,32 @@ app.get("/", async (req, res) => {
       .populate("products.product")
       .sort({ orderDate: -1 });
 
-    // Calculate product sales and payment totals
+    let totalSales = 0, cashTotal = 0, gpayTotal = 0, totalDiscount = 0, totalPending = 0;
+
+    // Seed ALL products first so every product always appears
     const productSalesMap = {};
-    let totalSales = 0;
-    let cashTotal = 0;
-    let gpayTotal = 0;
-    let totalDiscount = 0;
-    let totalPending = 0;
+    products.forEach((p) => {
+      productSalesMap[p._id.toString()] = { name: p.name, quantity: 0, totalSales: 0 };
+    });
 
     allOrders.forEach((order) => {
       totalSales += order.total;
       totalDiscount += order.discount || 0;
-
-      // Calculate payment method totals
-      if (order.paymentMethod === "Cash") {
-        cashTotal += order.total;
-      } else if (order.paymentMethod === "GPay") {
-        gpayTotal += order.total;
-      } else if (order.paymentMethod === "Pending") {
-        // If payment method is Pending, entire order total is pending
-        totalPending += order.total;
-      }
-
-      // Also add any additional pending amount from pending field
+      if (order.paymentMethod === "Cash") cashTotal += order.total;
+      else if (order.paymentMethod === "GPay") gpayTotal += order.total;
+      else if (order.paymentMethod === "Pending") totalPending += order.total;
       totalPending += order.pending || 0;
 
       order.products.forEach((item) => {
-        const productId = item.product._id.toString();
-        if (!productSalesMap[productId]) {
-          productSalesMap[productId] = {
-            name: item.product.name,
-            quantity: 0,
-            totalSales: 0,
-          };
-        }
-        productSalesMap[productId].quantity += item.quantity;
-        productSalesMap[productId].totalSales += item.quantity * item.price;
+        if (!item.product) return;
+        const pid = item.product._id.toString();
+        if (!productSalesMap[pid]) productSalesMap[pid] = { name: item.product.name, quantity: 0, totalSales: 0 };
+        productSalesMap[pid].quantity += item.quantity;
+        productSalesMap[pid].totalSales += item.quantity * item.price;
       });
     });
 
-    const productSales = Object.values(productSalesMap).sort(
-      (a, b) => b.totalSales - a.totalSales,
-    );
-    const totalProductSales = productSales.length;
-    const totalProductPages = Math.ceil(totalProductSales / limit);
-    const paginatedProductSales = productSales.slice(skip, skip + limit);
+    const productSales = Object.values(productSalesMap);
 
     res.render("admin/dashboard", {
       products,
@@ -147,11 +128,11 @@ app.get("/", async (req, res) => {
       totalPending,
       totalDiscount,
       currentPage: page,
-      totalPages: totalProductPages,
+      totalPages: 1,
       filter: filter || "all",
       startDate: startDate || "",
       endDate: endDate || "",
-      productSales: paginatedProductSales,
+      productSales,
     });
   } catch (error) {
     res.status(500).send(error.message);
