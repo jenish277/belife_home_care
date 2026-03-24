@@ -81,26 +81,55 @@
         }
 
         .top-bar h2 {
-            margin: 0 0 20px 0;
             color: #1e293b;
             font-weight: 700;
         }
 
         .filter-container {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 16px 20px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            padding-left: 45px;
+            height: 45px;
+            border: 2px solid #e2e8f0;
             border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .search-box input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
         }
 
         .filter-label {
             color: #475569;
             font-weight: 600;
             font-size: 14px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -111,56 +140,43 @@
             font-size: 16px;
         }
 
-        #dateFilter {
-            min-width: 160px;
-            border: 1px solid #cbd5e1;
-            background: white;
-            font-weight: 500;
-            color: #1e293b;
-        }
-
-        #dateFilter:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        #customDateRange {
+        .filter-btn-group {
             display: flex;
-            gap: 10px;
-            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
         }
 
-        #customDateRange input {
-            border: 1px solid #cbd5e1;
-            background: white;
-            font-weight: 500;
-            color: #1e293b;
-        }
-
-        #customDateRange input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        #customDateRange .date-separator {
-            color: #64748b;
-            font-weight: 500;
+        .filter-btn {
+            padding: 10px 18px;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+            text-align: center;
         }
 
-        #customDateRange button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            font-weight: 600;
-            padding: 10px 20px;
-            transition: all 0.2s;
-        }
-
-        #customDateRange button:hover {
-            background: #2563eb;
+        .filter-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .filter-btn.active {
+            background: #1e40af;
+            border-color: #1e40af;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.3);
+        }
+
+        .filter-btn i {
+            margin-right: 6px;
         }
 
         .stats-grid {
@@ -305,24 +321,24 @@
             .main-content {
                 margin-left: 0;
                 padding: 10px;
-                padding-top: 200px;
+                padding-top: 10px !important;
             }
 
             .top-bar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                padding: 15px;
-                margin-bottom: 0;
-                border-radius: 0;
-                z-index: 998;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                position: static;
+                margin-top: 0;
+                padding: 16px;
+                margin-bottom: 20px;
+                border-radius: 16px;
+                z-index: 10;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
             }
 
             .top-bar h2 {
-                font-size: 1.1rem;
-                margin: 0 0 12px 0;
+                font-size: 1.35rem;
+                text-align: center;
             }
 
             .filter-container {
@@ -338,95 +354,66 @@
                 justify-content: center;
             }
 
-            #dateFilter {
-                width: 100% !important;
-                min-width: auto;
-                font-size: 14px;
-            }
-
-            #customDateRange {
-                flex-direction: column !important;
-                gap: 8px !important;
-                width: 100%;
-            }
-
-            #customDateRange input {
-                width: 100% !important;
-                font-size: 14px;
-            }
-
-            #customDateRange .date-separator {
-                font-size: 12px;
-                text-align: center;
-            }
-
-            #customDateRange button {
-                width: 100% !important;
-                font-size: 14px;
-                padding: 10px;
-            }
-
             .stats-grid {
-                grid-template-columns: repeat(1, 1fr);
-                gap: 10px;
-                margin-top: 10px;
-                margin-bottom: 15px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-top: 5px;
+                margin-bottom: 20px;
+                padding: 0 5px;
             }
 
-            .stat-card {
-                padding: 15px;
-                border-radius: 10px;
+            .stats-grid .stat-card {
+                padding: 18px 15px;
+                border-radius: 14px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stats-grid .stat-card:last-child {
+                grid-column: 1 / -1;
             }
 
             .stat-card h6 {
                 font-size: 11px;
-                margin-bottom: 8px;
+                margin-bottom: 4px;
+                z-index: 2;
+                letter-spacing: 0.5px;
             }
 
             .stat-card h3 {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
+                z-index: 2;
+                margin: 0;
             }
 
             .stat-card i {
-                font-size: 1.5rem;
+                position: absolute;
+                right: -10px;
+                bottom: -10px;
+                font-size: 4.5rem;
+                opacity: 0.08;
+                z-index: 1;
             }
 
             .card {
-                border-radius: 10px;
-                margin-bottom: 15px;
+                border-radius: 16px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             }
 
             .card-header {
-                padding: 12px 15px;
-                font-size: 0.95rem;
+                padding: 16px 20px;
+                font-size: 1rem;
+                border-bottom: 1px solid #f1f5f9;
+                background: transparent;
             }
 
             .card-body {
-                padding: 15px;
-            }
-
-            .card-body .row {
-                gap: 10px;
-            }
-
-            .card-body .col-md-4 {
-                margin-bottom: 10px;
-            }
-
-            .card-body .col-md-4 > div {
-                padding: 12px !important;
-            }
-
-            .card-body .col-md-4 h6 {
-                font-size: 11px !important;
-            }
-
-            .card-body .col-md-4 h3 {
-                font-size: 1.3rem !important;
-            }
-
-            .card-body .col-md-4 i {
-                font-size: 1.5rem !important;
+                padding: 12px;
             }
 
             .table {
@@ -434,21 +421,22 @@
             }
 
             .table thead th {
-                padding: 8px 6px;
+                padding: 10px 8px;
                 font-size: 10px;
                 white-space: nowrap;
+                letter-spacing: 0.5px;
             }
 
             .table tbody td {
-                padding: 8px 6px;
-                font-size: 0.75rem;
+                padding: 12px 8px;
+                font-size: 0.8rem;
             }
 
             .badge {
-                font-size: 9px;
-                padding: 3px 6px;
+                font-size: 10px;
+                padding: 4px 8px;
                 display: inline-block;
-                margin: 2px 0;
+                border-radius: 6px;
             }
 
             .mobile-menu-btn {
@@ -462,13 +450,22 @@
                 border: none;
                 color: white;
                 font-size: 1.5rem;
-                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
                 z-index: 1002;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
             }
+        }
+
+        .transition-all {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
         }
 
         @media (min-width: 769px) {
@@ -521,26 +518,148 @@
     <div class="main-content">
         <div class="top-bar">
             <h2>Dashboard Overview</h2>
-            <div class="filter-container">
-                <span class="filter-label">
-                    <i class="fas fa-calendar-alt"></i>
-                    Date Filter
-                </span>
-                <select id="dateFilter" class="form-select">
-                    <option value="all" <%= filter === 'all' ? 'selected' : '' %>>All Time</option>
-                    <option value="today" <%= filter === 'today' ? 'selected' : '' %>>Today</option>
-                    <option value="week" <%= filter === 'week' ? 'selected' : '' %>>This Week</option>
-                    <option value="month" <%= filter === 'month' ? 'selected' : '' %>>This Month</option>
-                    <option value="year" <%= filter === 'year' ? 'selected' : '' %>>This Year</option>
-                    <option value="custom" <%= filter === 'custom' ? 'selected' : '' %>>Custom Range</option>
-                </select>
-                <div id="customDateRange" style="display: <%= filter === 'custom' ? 'flex' : 'none' %>;">
-                    <input type="date" id="startDate" class="form-control" style="width: 150px;" value="<%= startDate %>">
-                    <span class="date-separator">to</span>
-                    <input type="date" id="endDate" class="form-control" style="width: 150px;" value="<%= endDate %>">
-                    <button class="btn" onclick="applyCustomDate()">
-                        <i class="fas fa-check me-1"></i>Apply
-                    </button>
+        </div>
+
+
+        <style>
+            .date-filter-wrapper {
+                background: rgba(248, 250, 252, 0.8);
+                border: 1px solid #e2e8f0;
+            }
+
+            .custom-filter-btn.filter-btn {
+                padding: 8px 16px;
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 50rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #475569;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                min-width: unset;
+            }
+
+            .custom-filter-btn.filter-btn:hover {
+                background: #f1f5f9;
+                border-color: #cbd5e1;
+                transform: translateY(-1px);
+                color: #475569;
+            }
+
+            .custom-filter-btn.filter-btn.active {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                border-color: transparent;
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            }
+
+            .custom-filter-btn.filter-btn.active i {
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            .custom-filter-btn.filter-btn i {
+                color: #64748b;
+                font-size: 0.9rem;
+                margin-right: 0;
+            }
+
+            .date-input-modern {
+                border-radius: 10px;
+                border: 1px solid #cbd5e1;
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+                transition: all 0.2s;
+            }
+
+            .date-input-modern:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                outline: none;
+            }
+
+            .apply-btn-modern {
+                border-radius: 10px;
+                padding: 0.5rem 1.5rem;
+                font-weight: 600;
+                font-size: 0.85rem;
+                background: #0f172a;
+                color: white;
+                border: none;
+                transition: all 0.2s;
+                height: 100%;
+            }
+
+            .apply-btn-modern:hover {
+                background: #1e293b;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+            }
+        </style>
+        <div class="date-filter-wrapper p-4 rounded-4 mb-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3 border"
+                    style="width: 36px; height: 36px;">
+                    <i class="fas fa-calendar-alt text-primary fs-6"></i>
+                </div>
+                <span class="text-uppercase fw-bold text-secondary"
+                    style="font-size: 0.8rem; letter-spacing: 0.08em;">Timeframe Filter</span>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mb-0">
+                <button class="filter-btn custom-filter-btn <%= filter === 'all' ? 'active' : '' %>" data-date="all"
+                    onclick="setDateFilter(this)">
+                    <i class="fas fa-infinity"></i> All Time
+                </button>
+                <button class="filter-btn custom-filter-btn <%= filter === 'today' ? 'active' : '' %>" data-date="today"
+                    onclick="setDateFilter(this)">
+                    <i class="fas fa-sun"></i> Today
+                </button>
+                <button class="filter-btn custom-filter-btn <%= filter === 'week' ? 'active' : '' %>" data-date="week"
+                    onclick="setDateFilter(this)">
+                    <i class="fas fa-calendar-week"></i> This Week
+                </button>
+                <button class="filter-btn custom-filter-btn <%= filter === 'month' ? 'active' : '' %>" data-date="month"
+                    onclick="setDateFilter(this)">
+                    <i class="fas fa-calendar"></i> This Month
+                </button>
+                <button class="filter-btn custom-filter-btn <%= filter === 'year' ? 'active' : '' %>" data-date="year"
+                    onclick="setDateFilter(this)">
+                    <i class="fas fa-calendar-alt"></i> This Year
+                </button>
+                <button class="filter-btn custom-filter-btn <%= filter === 'custom' ? 'active' : '' %>"
+                    data-date="custom" onclick="setDateFilter(this)">
+                    <i class="fas fa-sliders-h"></i> Custom Range
+                </button>
+            </div>
+
+            <div id="customDateRange" class="<%= filter === 'custom' ? 'd-block' : 'd-none' %> transition-all mt-3">
+                <div class="p-3 bg-white rounded-4 shadow-sm border border-light" style="max-width: 600px;">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4 col-sm-6">
+                            <label class="form-label text-muted mb-1"
+                                style="font-size: 0.70rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Start
+                                Date</label>
+                            <input type="date" id="startDate" class="form-control date-input-modern w-100"
+                                value="<%= startDate %>">
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <label class="form-label text-muted mb-1"
+                                style="font-size: 0.70rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">End
+                                Date</label>
+                            <input type="date" id="endDate" class="form-control date-input-modern w-100"
+                                value="<%= endDate %>">
+                        </div>
+                        <div class="col-md-4 col-12 text-end">
+                            <button class="apply-btn-modern w-100 py-2 mt-md-0 mt-2" onclick="applyCustomDate()">
+                                <i class="fas fa-check me-2"></i> Apply Range
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -569,44 +688,90 @@
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">Payment Method Breakdown</div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="text-center p-3" style="background: #f8fafc; border-radius: 10px; border-left: 4px solid #6366f1;">
-                            <i class="fas fa-money-bill-wave" style="font-size: 2rem; color: #6366f1; opacity: 0.3;"></i>
-                            <h6 class="text-muted mt-2 mb-1" style="font-size: 12px; text-transform: uppercase;">Cash Payment</h6>
-                            <h3 class="mb-0" style="color: #1e293b; font-weight: 700;">₹<%= totalCash %></h3>
-                        </div>
+        <div class="card mb-4 shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+                <h5 class="mb-0 fw-bold">Payment Method Breakdown</h5>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <a href="/admin/orders?payment=Cash"
+                            class="text-decoration-none d-block h-100 transition-all hover-lift">
+                            <div class="text-center p-3 h-100 d-flex flex-column justify-content-center"
+                                style="background: #eff6ff; border-radius: 12px; border: 1px solid #bfdbfe;">
+                                <div class="mb-2"><i class="fas fa-money-bill-wave"
+                                        style="font-size: 1.5rem; color: #3b82f6;"></i></div>
+                                <h6 class="text-muted mb-1"
+                                    style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                                    Cash Payment</h6>
+                                <h4 class="mb-0" style="color: #1e293b; font-weight: 800; letter-spacing: -0.5px;">₹<%=
+                                        totalCash %>
+                                </h4>
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-md-3">
-                        <div class="text-center p-3" style="background: #f8fafc; border-radius: 10px; border-left: 4px solid #10b981;">
-                            <i class="fab fa-google-pay" style="font-size: 2rem; color: #10b981; opacity: 0.3;"></i>
-                            <h6 class="text-muted mt-2 mb-1" style="font-size: 12px; text-transform: uppercase;">GPay Payment</h6>
-                            <h3 class="mb-0" style="color: #1e293b; font-weight: 700;">₹<%= totalGPay %></h3>
-                        </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/admin/orders?payment=GPay"
+                            class="text-decoration-none d-block h-100 transition-all hover-lift">
+                            <div class="text-center p-3 h-100 d-flex flex-column justify-content-center"
+                                style="background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+                                <div class="mb-2"><i class="fab fa-google-pay"
+                                        style="font-size: 1.5rem; color: #10b981;"></i></div>
+                                <h6 class="text-muted mb-1"
+                                    style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                                    GPay Payment</h6>
+                                <h4 class="mb-0" style="color: #1e293b; font-weight: 800; letter-spacing: -0.5px;">₹<%=
+                                        totalGPay %>
+                                </h4>
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-md-3">
-                        <div class="text-center p-3" style="background: #f8fafc; border-radius: 10px; border-left: 4px solid #ef4444;">
-                            <i class="fas fa-clock" style="font-size: 2rem; color: #ef4444; opacity: 0.3;"></i>
-                            <h6 class="text-muted mt-2 mb-1" style="font-size: 12px; text-transform: uppercase;">Pending Total</h6>
-                            <h3 class="mb-0" style="color: #1e293b; font-weight: 700;">₹<%= totalPending %></h3>
-                        </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/admin/orders?payment=Pending"
+                            class="text-decoration-none d-block h-100 transition-all hover-lift">
+                            <div class="text-center p-3 h-100 d-flex flex-column justify-content-center"
+                                style="background: #fef2f2; border-radius: 12px; border: 1px solid #fecaca;">
+                                <div class="mb-2"><i class="fas fa-clock"
+                                        style="font-size: 1.5rem; color: #ef4444;"></i></div>
+                                <h6 class="text-muted mb-1"
+                                    style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                                    Pending Total</h6>
+                                <h4 class="mb-0" style="color: #ef4444; font-weight: 800; letter-spacing: -0.5px;">₹<%=
+                                        totalPending %>
+                                </h4>
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-md-3">
-                        <div class="text-center p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
-                            <i class="fas fa-calculator" style="font-size: 2rem; opacity: 0.3;"></i>
-                            <h6 class="mt-2 mb-1" style="font-size: 12px; text-transform: uppercase; opacity: 0.9;">Total Sales</h6>
-                            <h3 class="mb-0" style="font-weight: 700;">₹<%= totalSales %></h3>
-                        </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/admin/orders" class="text-decoration-none d-block h-100 transition-all hover-lift">
+                            <div class="text-center p-3 h-100 d-flex flex-column justify-content-center"
+                                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 12px; color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+                                <div class="mb-2"><i class="fas fa-calculator"
+                                        style="font-size: 1.5rem; color: rgba(255,255,255,0.9);"></i></div>
+                                <h6 class="mb-1"
+                                    style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; opacity: 0.9;">
+                                    Total Sales</h6>
+                                <h4 class="mb-0" style="font-weight: 800; letter-spacing: -0.5px;">₹<%= totalSales %>
+                                </h4>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">Product Sales</div>
+        <div class="card shadow-sm border-0 rounded-4">
+            <div
+                class="card-header bg-white border-bottom-0 pt-4 pb-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h5 class="mb-0 fw-bold">Product Sales Analysis</h5>
+                <div class="search-container mb-0" style="margin-bottom: 0;">
+                    <div class="search-box" style="margin-bottom: 0;">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="dashboardSearch" class="form-control hover-lift"
+                            style="border-radius: 50rem;" placeholder="Search by product name...">
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -617,24 +782,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (productSales.length > 0) { %>
-                            <% productSales.forEach(product => { %>
+                        <% if (productSales.length> 0) { %>
+                            <% productSales.forEach(product=> { %>
                                 <tr>
-                                    <td><strong><%= product.name %></strong></td>
-                                    <td><span class="badge bg-info"><%= product.quantity %> units</span></td>
+                                    <td><strong>
+                                            <%= product.name %>
+                                        </strong></td>
+                                    <td><span class="badge bg-info">
+                                            <%= product.quantity %> units
+                                        </span></td>
                                     <td><strong>₹<%= product.totalSales %></strong></td>
                                 </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="3" class="text-center">No sales data available</td>
-                            </tr>
-                        <% } %>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="3" class="text-center">No sales data available</td>
+                                        </tr>
+                                        <% } %>
                     </tbody>
                     <tfoot style="background: #f8fafc; border-top: 2px solid #e2e8f0;">
                         <tr>
-                            <td colspan="2" class="text-end" style="padding: 15px; font-weight: 600; color: #475569;">Total Discount:</td>
-                            <td style="padding: 15px;"><strong style="color: #ef4444; font-size: 1.1rem;">₹<%= totalDiscount %></strong></td>
+                            <td colspan="2" class="text-end" style="padding: 15px; font-weight: 600; color: #475569;">
+                                Total Discount:</td>
+                            <td style="padding: 15px;"><strong style="color: #ef4444; font-size: 1.1rem;">₹<%=
+                                        totalDiscount %></strong></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -645,16 +816,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Mobile menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const sidebar = document.getElementById('sidebar');
             const mobileOverlay = document.getElementById('mobileOverlay');
-            
+
             if (mobileMenuBtn && sidebar && mobileOverlay) {
                 sidebar.classList.remove('show');
                 mobileOverlay.classList.remove('show');
-                
-                mobileMenuBtn.addEventListener('click', function() {
+
+                mobileMenuBtn.addEventListener('click', function () {
                     const isOpen = sidebar.classList.contains('show');
                     if (isOpen) {
                         sidebar.classList.remove('show');
@@ -664,14 +835,14 @@
                         mobileOverlay.classList.add('show');
                     }
                 });
-                
-                mobileOverlay.addEventListener('click', function() {
+
+                mobileOverlay.addEventListener('click', function () {
                     sidebar.classList.remove('show');
                     mobileOverlay.classList.remove('show');
                 });
-                
+
                 document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                    link.addEventListener('click', function() {
+                    link.addEventListener('click', function () {
                         sidebar.classList.remove('show');
                         mobileOverlay.classList.remove('show');
                     });
@@ -679,18 +850,26 @@
             }
         });
 
-        // Date filter functionality
-        const dateFilter = document.getElementById('dateFilter');
-        const customDateRange = document.getElementById('customDateRange');
+        // Enhanced date filter functionality with button-based design
+        function setDateFilter(button) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active class to clicked button
+            button.classList.add('active');
 
-        dateFilter.addEventListener('change', function() {
-            if (this.value === 'custom') {
-                customDateRange.style.display = 'flex';
+            const dateValue = button.dataset.date;
+            const customDateRange = document.getElementById('customDateRange');
+            if (dateValue === 'custom') {
+                customDateRange.classList.remove('d-none');
+                customDateRange.classList.add('d-block');
             } else {
-                customDateRange.style.display = 'none';
-                window.location.href = `/?filter=${this.value}`;
+                customDateRange.classList.remove('d-block');
+                customDateRange.classList.add('d-none');
+                window.location.href = `/?filter=${dateValue}`;
             }
-        });
+        }
 
         function applyCustomDate() {
             const startDate = document.getElementById('startDate').value;
@@ -701,6 +880,21 @@
                 alert('Please select both start and end dates');
             }
         }
+
+        // Dashboard search functionality
+        document.getElementById('dashboardSearch').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.table tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
     </script>
 </body>
 

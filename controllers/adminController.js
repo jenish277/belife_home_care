@@ -61,8 +61,11 @@ exports.addUser = async (req, res) => {
 // Orders
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("user").populate("products.product");
-    res.render("admin/orders", { orders });
+    const [orders, products] = await Promise.all([
+      Order.find().populate("user").populate("products.product"),
+      Product.find(),
+    ]);
+    res.render("admin/orders", { orders, products });
   } catch (error) {
     res.status(500).send(error.message);
   }

@@ -1,60 +1,374 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Belife Home Care  </title>
+    <title>Products - Belife Home Care </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/mobile.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f5f7fa; }
-        .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: #1e293b; padding: 20px 0; z-index: 1000; }
-        .sidebar-brand { padding: 0 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-brand h4 { color: #fff; font-weight: 700; margin: 0; }
-        .sidebar-menu { list-style: none; padding: 20px 0; }
-        .sidebar-menu li a { display: flex; align-items: center; padding: 12px 20px; color: #94a3b8; text-decoration: none; transition: all 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        .sidebar-menu li a i { width: 20px; margin-right: 12px; }
-        .main-content { margin-left: 260px; padding: 30px; }
-        .top-bar { background: #fff; padding: 20px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .top-bar h2 { margin: 0; color: #1e293b; font-weight: 700; }
-        .btn-primary { background: #3b82f6; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 500; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-warning { background: #f59e0b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .btn-danger { background: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; }
-        .table { margin: 0; }
-        .table thead th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 13px; text-transform: uppercase; border: none; padding: 15px; }
-        .table tbody td { padding: 15px; color: #334155; vertical-align: middle; border-color: #f1f5f9; }
-        .table tbody tr:hover { background: #f8fafc; }
-        .badge { padding: 6px 12px; font-weight: 500; font-size: 12px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #1e293b;
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h4 {
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .sidebar-menu li a i {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            border: none;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            color: #334155;
+            vertical-align: middle;
+            border-color: #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
         .table-responsive {
             max-height: 500px;
             overflow-y: auto;
         }
-        .modal-content { border-radius: 12px; border: none; }
-        .modal-header { border-bottom: 1px solid #e2e8f0; }
-        .form-label { font-weight: 500; color: #475569; margin-bottom: 8px; }
-        .form-control { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; }
-        .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+
+        .filter-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .filter-btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .top-bar {
+            background: #ffffff;
+            padding: 24px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #0f172a;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            font-size: 1.5rem;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .top-bar .btn {
+            padding: 10px 24px;
+            border-radius: 50rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .top-bar .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: #ffffff;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .btn-success:hover {
+            background: #f0fdf4;
+            color: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
         @media (max-width: 768px) {
-            .main-content { margin-left: 0; padding: 10px; padding-top: 70px; }
-            .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 12px 15px; margin-bottom: 0; border-radius: 0; z-index: 998; flex-direction: column; gap: 10px; }
-            .top-bar h2 { font-size: 1.2rem; }
-            .top-bar .btn { width: 100%; }
-            .card.mb-3 { margin-top: 70px !important; }
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+                padding-top: 10px !important;
+            }
+
+            .top-bar {
+                position: static;
+                margin-top: 0;
+                padding: 16px;
+                margin-bottom: 20px;
+                border-radius: 16px;
+                z-index: 10;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .top-bar h2 {
+                font-size: 1.35rem;
+                text-align: center;
+            }
+
+            .top-bar-actions {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+            }
+
+            .top-bar-actions .btn {
+                flex: 1;
+                padding: 12px 10px;
+                white-space: nowrap;
+                font-size: 0.8rem;
+            }
+
+            .card.mb-3 {
+                margin-top: 15px !important;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <h4><i class="fas fa-home me-2"></i>Belife Home Care  </h4>
+            <h4><i class="fas fa-home me-2"></i>Belife Home Care </h4>
         </div>
         <ul class="sidebar-menu">
             <li><a href="/"><i class="fas fa-chart-line"></i>Dashboard</a></li>
@@ -66,21 +380,136 @@
     </div>
 
     <div class="main-content">
+        <!-- <div class="top-bar shadow-sm border-0 rounded-4 d-flex flex-wrap gap-3 align-items-center">
+            <h4 class="mb-0 fw-bold" style="color: #1e293b; letter-spacing: -0.5px;">Products Management</h4>
+            <div class="d-flex gap-2 ms-md-auto">
+                <button class="btn btn-success btn-sm rounded-pill px-3 py-2 shadow-sm hover-lift fw-bold" onclick="showDateModal()" style="font-size: 0.8rem;"><i class="fas fa-download me-2"></i>Export Excel</button>
+                <button class="btn btn-primary btn-sm rounded-pill px-3 py-2 shadow-sm hover-lift fw-bold" data-bs-toggle="modal" data-bs-target="#addModal" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; font-size: 0.8rem;"><i class="fas fa-plus me-2"></i>Add Product</button>
+            </div>
+        </div> -->
         <div class="top-bar">
             <h2>Products Management</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="fas fa-plus me-2"></i>Add Product</button>
-        </div>
-
-        <div class="card mb-3">
-            <div class="card-body">
-                <input type="text" id="searchProduct" class="form-control" placeholder="Search products by name...">
+            <div class="top-bar-actions">
+                <button class="btn btn-success" onclick="showDateModal()"><i class="fas fa-download"></i> Export
+                    Excel</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
+                        class="fas fa-plus"></i> Add Product</button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="text-muted">
-                    Total Products: <%= totalProducts %>
+        <style>
+            .transition-all {
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            }
+
+            .hover-lift:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+            }
+
+            .custom-filter-btn {
+                padding: 8px 16px;
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 50rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #475569;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                min-width: unset !important;
+            }
+
+            .custom-filter-btn:hover {
+                background: #f1f5f9;
+                border-color: #cbd5e1;
+                transform: translateY(-1px);
+                color: #475569;
+            }
+
+            .custom-filter-btn.active {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                border-color: transparent !important;
+                color: #ffffff !important;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            }
+
+            .custom-filter-btn.active i {
+                color: rgba(255, 255, 255, 0.9) !important;
+            }
+
+            .custom-filter-btn i {
+                color: #64748b;
+                font-size: 0.9rem;
+            }
+        </style>
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-body p-4 bg-light rounded-4">
+                <div class="row g-4 align-items-center">
+                    <div class="col-12">
+                        <label class="form-label text-muted fw-bold mb-2 text-uppercase d-flex align-items-center"
+                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            <i class="fas fa-filter me-2 text-primary fs-6"></i>Stock Filter
+                        </label>
+                        <% let lowStockCount=0; let inStockCount=0; if (typeof products !=='undefined' && products) {
+                            products.forEach(p=> {
+                            if (p.availableQuantity < 10) lowStockCount++; else inStockCount++; }); } %>
+                                <div class="d-flex flex-wrap gap-3 mt-2">
+                                    <button class="btn btn-sm btn-outline-primary active position-relative"
+                                        data-stock="" onclick="setStockFilter(this)">
+                                        <i class="fas fa-list me-1"></i>All Products
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            style="font-size: 0.65rem;">
+                                            <%= typeof totalProducts !=='undefined' ? totalProducts : (typeof products
+                                                !=='undefined' ? products.length : 0) %>
+                                        </span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary position-relative" data-stock="low"
+                                        onclick="setStockFilter(this)">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>Low Stock
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            style="font-size: 0.65rem;">
+                                            <%= lowStockCount %>
+                                        </span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary position-relative"
+                                        data-stock="available" onclick="setStockFilter(this)">
+                                        <i class="fas fa-check-circle me-1"></i>In Stock
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            style="font-size: 0.65rem;">
+                                            <%= inStockCount %>
+                                        </span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary ms-md-auto"
+                                        onclick="clearAllFilters()">
+                                        <i class="fas fa-eraser me-1"></i>Clear Filters
+                                    </button>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <h5 class="mb-0 fw-bold">All Products</h5>
+                    <span class="badge bg-primary bg-gradient rounded-pill px-3 py-2 shadow-sm"
+                        style="font-size: 0.85rem;">Total: <%= totalProducts %></span>
+                </div>
+                <div class="search-box position-relative" style="min-width: 300px; max-width: 450px; flex: 1;">
+                    <i class="fas fa-search position-absolute top-50 translate-middle-y text-muted"
+                        style="left: 15px;"></i>
+                    <input type="text" id="searchProduct"
+                        class="form-control hover-lift rounded-pill border shadow-sm ps-5"
+                        placeholder="Search products by name..." style="height: 42px; background-color: #f8fafc; border-color: #e2e8f0;">
                 </div>
             </div>
             <div class="table-responsive">
@@ -94,19 +523,29 @@
                         </tr>
                     </thead>
                     <tbody id="productsTableBody">
-                        <% products.forEach(product => { %>
-                        <tr>
-                            <td><strong><%= product.name %></strong></td>
-                            <td>₹<%= product.price %></td>
-                            <td><span class="badge <%= product.availableQuantity < 10 ? 'bg-danger' : 'bg-success' %>"><%= product.availableQuantity %></span></td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editProduct('<%= product._id %>', '<%= product.name %>', '<%= product.price %>', '<%= product.availableQuantity %>')"><i class="fas fa-edit"></i></button>
-                                <form action="/admin/products/delete/<%= product._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% }) %>
+                        <% products.forEach(product=> { %>
+                            <tr>
+                                <td><strong>
+                                        <%= product.name %>
+                                    </strong></td>
+                                <td>₹<%= product.price %>
+                                </td>
+                                <td><span
+                                        class="badge <%= product.availableQuantity < 10 ? 'bg-danger' : 'bg-success' %>">
+                                        <%= product.availableQuantity %>
+                                    </span></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm"
+                                        onclick="editProduct('<%= product._id %>', '<%= product.name %>', '<%= product.price %>', '<%= product.availableQuantity %>')"><i
+                                            class="fas fa-edit"></i></button>
+                                    <form action="/admin/products/delete/<%= product._id %>" method="POST"
+                                        style="display:inline;" onsubmit="return confirmDelete(this)">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
                     </tbody>
                 </table>
             </div>
@@ -160,7 +599,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Available Quantity</label>
-                            <input type="number" name="availableQuantity" id="editQuantity" class="form-control" min="0" required>
+                            <input type="number" name="availableQuantity" id="editQuantity" class="form-control" min="0"
+                                required>
                             <small class="text-muted">Update quantity to add stock entry</small>
                         </div>
                     </div>
@@ -177,7 +617,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center py-4">
@@ -193,7 +634,68 @@
         </div>
     </div>
 
+    <!-- Date Selection Modal -->
+    <div class="modal fade" id="dateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-calendar-alt me-2"></i>Select Date Range for Export</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">From Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input type="date" id="startDate" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">To Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input type="date" id="endDate" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('today')">
+                            <i class="fas fa-clock me-1"></i>Today
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('week')">
+                            <i class="fas fa-calendar-week me-1"></i>This Week
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('month')">
+                            <i class="fas fa-calendar me-1"></i>This Month
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('year')">
+                            <i class="fas fa-calendar-alt me-1"></i>This Year
+                        </button>
+                    </div>
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>Select a date range to export data. Use quick buttons for common ranges.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel me-2"></i>Export Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="/mobile.js"></script>
     <script>
         let deleteForm = null;
@@ -204,12 +706,12 @@
             return false;
         }
 
-        document.getElementById('confirmDelete').addEventListener('click', function() {
+        document.getElementById('confirmDelete').addEventListener('click', function () {
             if (deleteForm) {
                 deleteForm.submit();
             }
         });
-        
+
         function editProduct(id, name, price, quantity) {
             document.getElementById('editForm').action = '/admin/products/update/' + id;
             document.getElementById('editName').value = name;
@@ -218,20 +720,198 @@
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
 
-        // Search functionality
-        document.getElementById('searchProduct').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
+        function setStockFilter(button) {
+            // Remove active class from all stock buttons
+            document.querySelectorAll('[data-stock]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active class to clicked button
+            button.classList.add('active');
+            // Apply filter
+            filterProducts();
+        }
+
+        function clearAllFilters() {
+            // Clear search
+            document.getElementById('searchProduct').value = '';
+            // Reset stock filter
+            document.querySelectorAll('[data-stock]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[data-stock=""]').classList.add('active');
+            // Apply filters
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const searchElement = document.getElementById('searchProduct');
+            const searchTerm = searchElement ? searchElement.value.toLowerCase().trim() : '';
+            const activeBtn = document.querySelector('[data-stock].active');
+            const activeStockFilter = activeBtn ? activeBtn.dataset.stock : '';
             const rows = document.querySelectorAll('#productsTableBody tr');
-            
+
             rows.forEach(row => {
-                const productName = row.querySelector('td:first-child').textContent.toLowerCase();
-                if (productName.includes(searchTerm)) {
+                const nameCell = row.querySelector('td:first-child');
+                const stockBadge = row.querySelector('td:nth-child(3) .badge');
+
+                if (!nameCell || !stockBadge) return;
+
+                const productName = nameCell.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+                const stockQuantity = parseInt(stockBadge.textContent) || 0;
+
+                let matchesSearch = productName.includes(searchTerm);
+                let matchesStock = true;
+
+                if (activeStockFilter === 'low') {
+                    matchesStock = stockQuantity < 10;
+                } else if (activeStockFilter === 'available') {
+                    matchesStock = stockQuantity >= 10;
+                }
+
+                if (matchesSearch && matchesStock) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
-        });
+        }
+
+        // Add event listener for search input
+        const searchInput = document.getElementById('searchProduct');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                filterProducts();
+            });
+        }
+        // Date Modal and Excel Export functionality
+        function showDateModal() {
+            // Set today's date as default end date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('endDate').value = today;
+
+            // Set 30 days ago as default start date
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+
+            new bootstrap.Modal(document.getElementById('dateModal')).show();
+        }
+
+        function setQuickDate(range) {
+            const today = new Date();
+            const startDate = new Date();
+
+            switch (range) {
+                case 'today':
+                    startDate.setTime(today.getTime());
+                    break;
+                case 'week':
+                    startDate.setDate(today.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate.setMonth(today.getMonth() - 1);
+                    break;
+                case 'year':
+                    startDate.setFullYear(today.getFullYear() - 1);
+                    break;
+            }
+
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        }
+
+        function exportToExcel() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            if (startDate > endDate) {
+                alert('Start date must be before end date');
+                return;
+            }
+
+            const products = <%- JSON.stringify(products) %>;
+            const filteredProducts = products.filter(product => {
+                const productDate = new Date(product.createdAt);
+                return productDate >= startDate && productDate <= endDate;
+            });
+
+            if (filteredProducts.length === 0) {
+                alert('No products found in the selected date range');
+                return;
+            }
+
+            // Show loading state
+            const exportBtn = event.target;
+            const originalText = exportBtn.innerHTML;
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+            exportBtn.disabled = true;
+
+            setTimeout(() => {
+                // Create worksheet data
+                const wsData = [
+                    ['Name', 'Price', 'Available Quantity', 'Created Date']
+                ];
+
+                filteredProducts.forEach(product => {
+                    wsData.push([
+                        product.name || '',
+                        product.price || 0,
+                        product.availableQuantity || 0,
+                        new Date(product.createdAt).toLocaleDateString('en-IN')
+                    ]);
+                });
+
+                // Create workbook and worksheet
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Products');
+
+                // Generate filename with date range
+                const startStr = startDate.toLocaleDateString('en-IN').replace(/\//g, '-');
+                const endStr = endDate.toLocaleDateString('en-IN').replace(/\//g, '-');
+                const filename = `products_${startStr}_to_${endStr}.xlsx`;
+
+                // Download file
+                XLSX.writeFile(wb, filename);
+
+                // Reset button and close modal
+                exportBtn.innerHTML = originalText;
+                exportBtn.disabled = false;
+                bootstrap.Modal.getInstance(document.getElementById('dateModal')).hide();
+
+                // Show success message
+                showSuccessMessage(`Successfully exported ${filteredProducts.length} products to Excel!`);
+            }, 500);
+        }
+
+        function showSuccessMessage(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
     </script>
 </body>
+
 </html>

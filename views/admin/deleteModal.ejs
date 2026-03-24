@@ -20,17 +20,17 @@
 </div>
 
 <script>
-let deleteForm = null;
+    let deleteForm = null;
 
-function confirmDelete(form) {
-    deleteForm = form;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    return false;
-}
-
-document.getElementById('confirmDelete').addEventListener('click', function() {
-    if (deleteForm) {
-        deleteForm.submit();
+    function confirmDelete(form) {
+        deleteForm = form;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        return false;
     }
-});
+
+    document.getElementById('confirmDelete').addEventListener('click', function () {
+        if (deleteForm) {
+            deleteForm.submit();
+        }
+    });
 </script>

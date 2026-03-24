@@ -1,59 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users - Belife Home Care  </title>
+    <title>Users - Belife Home Care </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/mobile.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f5f7fa; }
-        .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: #1e293b; padding: 20px 0; z-index: 1000; }
-        .sidebar-brand { padding: 0 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-brand h4 { color: #fff; font-weight: 700; margin: 0; }
-        .sidebar-menu { list-style: none; padding: 20px 0; }
-        .sidebar-menu li a { display: flex; align-items: center; padding: 12px 20px; color: #94a3b8; text-decoration: none; transition: all 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        .sidebar-menu li a i { width: 20px; margin-right: 12px; }
-        .main-content { margin-left: 260px; padding: 30px; }
-        .top-bar { background: #fff; padding: 20px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .top-bar h2 { margin: 0; color: #1e293b; font-weight: 700; }
-        .btn-primary { background: #3b82f6; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 500; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-warning { background: #f59e0b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .btn-danger { background: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; }
-        .table { margin: 0; }
-        .table thead th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 13px; text-transform: uppercase; border: none; padding: 15px; }
-        .table tbody td { padding: 15px; color: #334155; vertical-align: middle; border-color: #f1f5f9; }
-        .table tbody tr:hover { background: #f8fafc; }
-        .modal-content { border-radius: 12px; border: none; }
-        .modal-header { border-bottom: 1px solid #e2e8f0; }
-        .form-label { font-weight: 500; color: #475569; margin-bottom: 8px; }
-        .form-control { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; }
-        .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        @media (max-width: 768px) {
-            .main-content { margin-left: 0; padding: 10px; padding-top: 70px; }
-            .top-bar { position: fixed; top: 0; left: 0; right: 0; padding: 12px 15px; margin-bottom: 0; border-radius: 0; z-index: 998; flex-direction: column; gap: 10px; }
-            .top-bar h2 { font-size: 1.2rem; }
-            .top-bar .btn { width: 100%; }
-            .card.mb-3 { margin-top: 70px !important; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #1e293b;
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h4 {
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .sidebar-menu li a i {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: #ffffff;
+            padding: 24px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #0f172a;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            font-size: 1.5rem;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .top-bar .btn {
+            padding: 10px 24px;
+            border-radius: 50rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .top-bar .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .top-bar .btn-success {
+            background: #ffffff;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .top-bar .btn-success:hover {
+            background: #f0fdf4;
+            color: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            border: none;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            color: #334155;
+            vertical-align: middle;
+            border-color: #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+                padding-top: 10px !important;
+            }
+
+            .top-bar {
+                position: static;
+                margin-top: 0;
+                padding: 16px;
+                margin-bottom: 20px;
+                border-radius: 16px;
+                z-index: 10;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .top-bar h2 {
+                font-size: 1.35rem;
+                text-align: center;
+            }
+
+            .top-bar-actions {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+            }
+
+            .top-bar-actions .btn {
+                flex: 1;
+                padding: 12px 10px;
+                white-space: nowrap;
+                font-size: 0.8rem;
+                margin: 0 !important;
+            }
+
+            .card.mb-3 {
+                margin-top: 70px !important;
+            }
+        }
+
         .table-responsive {
             max-height: 500px;
             overflow-y: auto;
         }
+
+        .filter-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .filter-btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+        }
     </style>
 </head>
+
 <body>
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <h4><i class="fas fa-home me-2"></i>Belife Home Care  </h4>
+            <h4><i class="fas fa-home me-2"></i>Belife Home Care </h4>
         </div>
         <ul class="sidebar-menu">
             <li><a href="/"><i class="fas fa-chart-line"></i>Dashboard</a></li>
@@ -67,12 +344,71 @@
     <div class="main-content">
         <div class="top-bar">
             <h2>Users Management</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="fas fa-user-plus me-2"></i>Add User</button>
+            <div class="top-bar-actions">
+                <button class="btn btn-success" onclick="showDateModal()"><i class="fas fa-download"></i> Export
+                    Excel</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
+                        class="fas fa-user-plus"></i> Add User</button>
+            </div>
         </div>
 
-        <div class="card mb-3">
-            <div class="card-body">
-                <input type="text" id="searchUser" class="form-control" placeholder="Search users by name, phone, or address...">
+        <div class="filter-section">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchUser" class="form-control"
+                            placeholder="Search users by name, phone, or address...">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label text-muted small mb-2">User Status</label>
+                        <% let allUsersCount=0; let activeUsersCount=0; let pendingUsersCount=0; if (typeof users
+                            !=='undefined' && users) { allUsersCount=users.length; users.forEach(u=> {
+                            if (u.orders && u.orders.length > 0) activeUsersCount++;
+                            if (parseFloat(u.totalPending || 0) > 0) pendingUsersCount++;
+                            });
+                            }
+                            %>
+                            <div class="filter-btn-group gap-3 mt-2">
+                                <button class="btn btn-sm btn-outline-primary active position-relative" data-status=""
+                                    onclick="setStatusFilter(this)">
+                                    <i class="fas fa-list me-1"></i>All Users
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        style="font-size: 0.65rem;">
+                                        <%= allUsersCount %>
+                                    </span>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary position-relative" data-status="active"
+                                    onclick="setStatusFilter(this)">
+                                    <i class="fas fa-shopping-cart me-1"></i>With Orders
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        style="font-size: 0.65rem;">
+                                        <%= activeUsersCount %>
+                                    </span>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary position-relative" data-status="pending"
+                                    onclick="setStatusFilter(this)">
+                                    <i class="fas fa-clock me-1"></i>With Pending
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        style="font-size: 0.65rem;">
+                                        <%= pendingUsersCount %>
+                                    </span>
+                                </button>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="clearAllFilters()">
+                        <i class="fas fa-times me-1"></i>Clear Filters
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -91,28 +427,39 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <% users.forEach(user => { %>
-                        <tr>
-                            <td><strong><%= user.name %></strong></td>
-                            <td><%= user.phoneNumber %></td>
-                            <td><%= user.address %></td>
-                            <td>
-                                <% if (user.orders && user.orders.length > 0) { %>
-                                    <button class="btn btn-info btn-sm" onclick="viewHistory('<%= user._id %>')"><i class="fas fa-history"></i> View (<%= user.orders.length %>)</button>
-                                <% } else { %>
-                                    <span class="text-muted">No orders</span>
-                                <% } %>
-                            </td>
-                            <td><strong>₹<%= user.totalSpent || 0 %></strong></td>
-                            <td><strong style="color: #ef4444;">₹<%= user.totalPending || 0 %></strong></td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editUser('<%= user._id %>', '<%= user.name %>', '<%= user.phoneNumber %>', '<%= user.address %>')"><i class="fas fa-edit"></i></button>
-                                <form action="/admin/users/delete/<%= user._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% }) %>
+                        <% users.forEach(user=> { %>
+                            <tr class="<%= user.totalPending > 0 ? 'table-warning' : '' %>">
+                                <td><strong>
+                                        <%= user.name %>
+                                    </strong></td>
+                                <td>
+                                    <%= user.phoneNumber %>
+                                </td>
+                                <td>
+                                    <%= user.address %>
+                                </td>
+                                <td>
+                                    <% if (user.orders && user.orders.length> 0) { %>
+                                        <button class="btn btn-info btn-sm" onclick="viewHistory('<%= user._id %>')"><i
+                                                class="fas fa-history"></i> View (<%= user.orders.length %>)</button>
+                                        <% } else { %>
+                                            <span class="text-muted">No orders</span>
+                                            <% } %>
+                                </td>
+                                <td><strong>₹<%= user.totalSpent || 0 %></strong></td>
+                                <td><strong style="color: #ef4444;">₹<%= user.totalPending || 0 %></strong></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm"
+                                        onclick="editUser('<%= user._id %>', '<%= user.name %>', '<%= user.phoneNumber %>', '<%= user.address %>')"><i
+                                            class="fas fa-edit"></i></button>
+                                    <form action="/admin/users/delete/<%= user._id %>" method="POST"
+                                        style="display:inline;" onsubmit="return confirmDelete(this)">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
                     </tbody>
                 </table>
             </div>
@@ -186,7 +533,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center py-4">
@@ -217,12 +565,73 @@
         </div>
     </div>
 
+    <!-- Date Selection Modal -->
+    <div class="modal fade" id="dateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-calendar-alt me-2"></i>Select Date Range for Export</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">From Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input type="date" id="startDate" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">To Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input type="date" id="endDate" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('today')">
+                            <i class="fas fa-clock me-1"></i>Today
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('week')">
+                            <i class="fas fa-calendar-week me-1"></i>This Week
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('month')">
+                            <i class="fas fa-calendar me-1"></i>This Month
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('year')">
+                            <i class="fas fa-calendar-alt me-1"></i>This Year
+                        </button>
+                    </div>
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>Select a date range to export data. Use quick buttons for common ranges.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel me-2"></i>Export Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="/mobile.js"></script>
     <script>
         // EJS template syntax: will be replaced with JSON data on server
         const usersData = <%- JSON.stringify(users) %>;
-        
+
         let deleteForm = null;
 
         function confirmDelete(form) {
@@ -231,12 +640,12 @@
             return false;
         }
 
-        document.getElementById('confirmDelete').addEventListener('click', function() {
+        document.getElementById('confirmDelete').addEventListener('click', function () {
             if (deleteForm) {
                 deleteForm.submit();
             }
         });
-        
+
         function editUser(id, name, number, address) {
             document.getElementById('editForm').action = '/admin/users/update/' + id;
             document.getElementById('editName').value = name;
@@ -244,22 +653,32 @@
             document.getElementById('editAddress').value = address;
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
-        
+
         function viewHistory(userId) {
             const user = usersData.find(u => u._id === userId);
             let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Products</th><th>Payment Mode</th><th>Pending</th><th>Total</th></tr></thead><tbody>';
-            
+
             user.orders.forEach(order => {
-                html += '<tr>';
+                const paymentMethod = order.paymentMethod || 'Cash';
+
+                // Calculate pending amount early so we can highlight the row if needed
+                let pendingAmount = 0;
+                if (paymentMethod === 'Pending') {
+                    pendingAmount = order.total;
+                }
+                pendingAmount += (order.pending || 0);
+
+                const rowClass = pendingAmount > 0 ? ' class="table-warning"' : '';
+                html += '<tr' + rowClass + '>';
+
                 html += '<td>' + new Date(order.orderDate).toDateString() + '</td>';
                 html += '<td>';
                 order.products.forEach(item => {
                     html += '<div><span class="badge bg-primary">' + item.product.name + '</span> Qty: ' + item.quantity + '</div>';
                 });
                 html += '</td>';
-                
+
                 // Add payment mode with badge styling
-                const paymentMethod = order.paymentMethod || 'Cash';
                 let paymentBadge = '';
                 if (paymentMethod === 'GPay') {
                     paymentBadge = '<span class="badge bg-success">GPay</span>';
@@ -269,46 +688,220 @@
                     paymentBadge = '<span class="badge bg-secondary">Cash</span>';
                 }
                 html += '<td>' + paymentBadge + '</td>';
-                
-                // Calculate and display pending amount
-                let pendingAmount = 0;
-                if (paymentMethod === 'Pending') {
-                    pendingAmount = order.total;
-                }
-                pendingAmount += (order.pending || 0);
-                
+
+                // Display pending amount
                 if (pendingAmount > 0) {
                     html += '<td><strong style="color: #ef4444;">₹' + pendingAmount + '</strong></td>';
                 } else {
                     html += '<td><span class="text-muted">-</span></td>';
                 }
-                
+
                 html += '<td><strong>₹' + order.total + '</strong></td>';
                 html += '</tr>';
             });
-            
+
             html += '</tbody></table></div>';
             document.getElementById('historyContent').innerHTML = html;
             new bootstrap.Modal(document.getElementById('historyModal')).show();
         }
 
-        // Search functionality
-        document.getElementById('searchUser').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
+        function setStatusFilter(button) {
+            // Remove active class from all status buttons
+            document.querySelectorAll('[data-status]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active class to clicked button
+            button.classList.add('active');
+            // Apply filter
+            filterUsers();
+        }
+
+        function clearAllFilters() {
+            // Clear search
+            document.getElementById('searchUser').value = '';
+            // Reset status filter
+            document.querySelectorAll('[data-status]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[data-status=""]').classList.add('active');
+            // Apply filters
+            filterUsers();
+        }
+
+        function filterUsers() {
+            const searchElement = document.getElementById('searchUser');
+            const searchTerm = searchElement ? searchElement.value.toLowerCase().trim() : '';
+            const activeBtn = document.querySelector('[data-status].active');
+            const activeStatusFilter = activeBtn ? activeBtn.dataset.status : '';
             const rows = document.querySelectorAll('#usersTableBody tr');
-            
+
             rows.forEach(row => {
-                const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-                const phone = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                const address = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                
-                if (name.includes(searchTerm) || phone.includes(searchTerm) || address.includes(searchTerm)) {
+                const nameCell = row.querySelector('td:nth-child(1)');
+                const phoneCell = row.querySelector('td:nth-child(2)');
+                const addressCell = row.querySelector('td:nth-child(3)');
+                const ordersCell = row.querySelector('td:nth-child(4)');
+                const pendingCell = row.querySelector('td:nth-child(6)');
+
+                if (!nameCell) return;
+
+                const name = nameCell.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+                const phone = phoneCell.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+                const address = addressCell.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+
+                let matchesSearch = name.includes(searchTerm) || phone.includes(searchTerm) || address.includes(searchTerm);
+                let matchesStatus = true;
+
+                if (activeStatusFilter === 'active') {
+                    matchesStatus = !ordersCell.textContent.includes('No orders');
+                } else if (activeStatusFilter === 'pending') {
+                    const pendingText = pendingCell.textContent.replace(/[^0-9.]/g, '');
+                    const pendingAmount = parseFloat(pendingText);
+                    matchesStatus = !isNaN(pendingAmount) && pendingAmount > 0;
+                }
+
+                if (matchesSearch && matchesStatus) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
+        }
+
+        // Enhanced search functionality with status filtering
+        document.getElementById('searchUser').addEventListener('input', function () {
+            filterUsers();
         });
+        // Date Modal and Excel Export functionality
+        function showDateModal() {
+            // Set today's date as default end date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('endDate').value = today;
+
+            // Set 30 days ago as default start date
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+
+            new bootstrap.Modal(document.getElementById('dateModal')).show();
+        }
+
+        function setQuickDate(range) {
+            const today = new Date();
+            const startDate = new Date();
+
+            switch (range) {
+                case 'today':
+                    startDate.setTime(today.getTime());
+                    break;
+                case 'week':
+                    startDate.setDate(today.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate.setMonth(today.getMonth() - 1);
+                    break;
+                case 'year':
+                    startDate.setFullYear(today.getFullYear() - 1);
+                    break;
+            }
+
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        }
+
+        function exportToExcel() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            if (startDate > endDate) {
+                alert('Start date must be before end date');
+                return;
+            }
+
+            const users = usersData.filter(user => {
+                const userDate = new Date(user.createdAt);
+                return userDate >= startDate && userDate <= endDate;
+            });
+
+            if (users.length === 0) {
+                alert('No users found in the selected date range');
+                return;
+            }
+
+            // Show loading state
+            const exportBtn = event.target;
+            const originalText = exportBtn.innerHTML;
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+            exportBtn.disabled = true;
+
+            setTimeout(() => {
+                // Create worksheet data
+                const wsData = [
+                    ['Name', 'Phone', 'Address', 'Total Orders', 'Total Spent', 'Total Pending', 'Created Date']
+                ];
+
+                users.forEach(user => {
+                    wsData.push([
+                        user.name || '',
+                        user.phoneNumber || '',
+                        user.address || '',
+                        user.orders ? user.orders.length : 0,
+                        user.totalSpent || 0,
+                        user.totalPending || 0,
+                        new Date(user.createdAt).toLocaleDateString('en-IN')
+                    ]);
+                });
+
+                // Create workbook and worksheet
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Users');
+
+                // Generate filename with date range
+                const startStr = startDate.toLocaleDateString('en-IN').replace(/\//g, '-');
+                const endStr = endDate.toLocaleDateString('en-IN').replace(/\//g, '-');
+                const filename = `users_${startStr}_to_${endStr}.xlsx`;
+
+                // Download file
+                XLSX.writeFile(wb, filename);
+
+                // Reset button and close modal
+                exportBtn.innerHTML = originalText;
+                exportBtn.disabled = false;
+                bootstrap.Modal.getInstance(document.getElementById('dateModal')).hide();
+
+                // Show success message
+                showSuccessMessage(`Successfully exported ${users.length} users to Excel!`);
+            }, 500);
+        }
+
+        function showSuccessMessage(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
     </script>
 </body>
+
 </html>

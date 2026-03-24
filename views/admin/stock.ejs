@@ -1,286 +1,914 @@
-<%
-    const safeStockUpdates = Array.isArray(stockUpdates) ? stockUpdates : [];
-    const safeProducts = Array.isArray(products) ? products : [];
-%>
+<% 
+    const safeStockUpdates = Array.isArray(stockUpdates) ? stockUpdates : []; 
+    const safeProducts = Array.isArray(products) ? products : []; 
+    
+    let todayCount = 0;
+    let weekCount = 0;
+    let monthCount = 0;
+    
+    if (safeStockUpdates.length > 0) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const weekAgo = new Date(today);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const monthAgo = new Date(today);
+        monthAgo.setMonth(monthAgo.getMonth() - 1);
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Management - Belife Home Care</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/mobile.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f5f7fa; min-height: 100vh; }
-        .sidebar { 
-            position: fixed; left: 0; top: 0; width: 260px; height: 100vh; 
-            background: #1e293b; padding: 20px 0; z-index: 1000; overflow-y: auto; 
-        }
-        .sidebar-brand { padding: 0 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-brand h4 { color: #fff; font-weight: 700; margin: 0; }
-        .sidebar-menu { list-style: none; padding: 20px 0; }
-        .sidebar-menu li a { 
-            display: flex; align-items: center; padding: 12px 20px; 
-            color: #94a3b8; text-decoration: none; transition: all 0.3s; 
-        }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { 
-            background: rgba(59, 130, 246, 0.15); color: #3b82f6; 
-        }
-        .sidebar-menu li a i { width: 20px; margin-right: 12px; }
-        .main-content { margin-left: 260px; padding: 30px; padding-top: 20px; }
-        .top-bar { 
-            background: #fff; padding: 20px 30px; border-radius: 12px; 
-            margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-        }
-        .top-bar h2 { margin: 0; color: #1e293b; font-weight: 700; }
-        .btn-primary { background: #3b82f6; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 500; }
-        .btn-primary:hover { background: #2563eb; }
-        .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; }
-        .table thead th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 13px; text-transform: uppercase; border: none; padding: 15px; }
-        .table tbody td { padding: 15px; color: #334155; vertical-align: middle; border-color: #f1f5f9; }
-        .table tbody tr:hover { background: #f8fafc; }
-        .badge { padding: 6px 12px; font-weight: 500; font-size: 12px; border-radius: 6px; }
-        .modal-content { border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        .modal-header { border-bottom: 1px solid #e2e8f0; }
-        .form-label { font-weight: 500; color: #475569; margin-bottom: 8px; }
-        .form-control, .form-select { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; font-size: 14px; }
-        .form-control:focus, .form-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
-        .table-responsive {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 992px) {
-            .sidebar { width: 220px; }
-            .main-content { margin-left: 220px; padding: 20px; }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
-            .sidebar.show { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 80px 15px 15px; }
-            .top-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 998; border-radius: 0; padding: 12px 15px; flex-direction: column; gap: 12px; }
-            .top-bar h2 { font-size: 1.3rem; width: 100%; text-align: center; }
-            .mobile-menu-btn { display: block !important; }
-        }
-    </style>
-</head>
-<body>
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <h4><i class="fas fa-home me-2"></i>Belife Home Care</h4>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="/"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="/admin/products"><i class="fas fa-box"></i> Products</a></li>
-            <li><a href="/admin/users"><i class="fas fa-users"></i> Users</a></li>
-            <li><a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-            <li><a href="/admin/stock" class="active"><i class="fas fa-warehouse"></i> Stock</a></li>
-        </ul>
-    </div>
-
-    <div class="main-content">
-        <div class="top-bar">
-            <h2>Stock Management</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal" aria-label="Add new stock entry">
-                <i class="fas fa-plus me-2"></i> Add Stock
-            </button>
-        </div>
-
-        <div class="card">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Quantity Added</th>
-                            <th>Date</th>
-                            <th>Notes</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (safeStockUpdates.length === 0) { %>
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No stock updates found.</td>
-                            </tr>
-                        <% } else { %>
-                            <% safeStockUpdates.forEach(update => { %>
-                            <tr>
-                                <td>
-                                    <strong><%= update.product ? update.product.name : 'Deleted Product' %></strong>
-                                </td>
-                                <td>
-                                    <span class="badge bg-success">+<%= update.quantityAdded %></span>
-                                </td>
-                                <td>
-                                    <%= update.date ? new Date(update.date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A' %>
-                                </td>
-                                <td><%= update.notes || '—' %></td>
-                                <td>
-                                    <button
-                                        class="btn btn-warning btn-sm me-1"
-                                        type="button"
-                                        onclick="editStock(this)"
-                                        data-id="<%= update._id %>"
-                                        data-product-id="<%= update.product ? update.product._id : '' %>"
-                                        data-quantity="<%= update.quantityAdded %>"
-                                        data-notes="<%= update.notes || '' %>"
-                                        <%= update.product ? '' : 'disabled title="Cannot edit — product deleted"' %> 
-                                        aria-label="Edit stock entry">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <form action="/admin/stock/delete/<%= update._id %>" method="POST" style="display:inline;" onsubmit="return confirmDelete(this)">
-                                        <button type="submit" class="btn btn-danger btn-sm" aria-label="Delete stock entry">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <% }) %>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Stock Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="/admin/stock" method="POST">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addModalLabel">Add New Stock</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Product</label>
-                            <select name="productId" class="form-select" required>
-                                <option value="">Select Product</option>
-                                <% safeProducts.forEach(product => { %>
-                                    <option value="<%= product._id %>">
-                                        <%= product.name %> (Current: <%= product.availableQuantity %>)
-                                    </option>
-                                <% }) %>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity to Add</label>
-                            <input type="number" name="quantityAdded" class="form-control" min="1" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Notes (Optional)</label>
-                            <textarea name="notes" class="form-control" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Stock</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Stock Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="editForm" method="POST">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">Edit Stock Entry</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Product</label>
-                            <select name="productId" id="editProductId" class="form-select" required>
-                                <option value="">Select Product</option>
-                                <% safeProducts.forEach(product => { %>
-                                    <option value="<%= product._id %>">
-                                        <%= product.name %> (Current: <%= product.availableQuantity %>)
-                                    </option>
-                                <% }) %>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity Added</label>
-                            <input type="number" name="quantityAdded" id="editQuantityAdded" class="form-control" min="1" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Notes (Optional)</label>
-                            <textarea name="notes" id="editNotes" class="form-control" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-danger" id="deleteModalLabel">
-                        <i class="fas fa-exclamation-triangle me-2"></i> Confirm Delete
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center py-4">
-                    <i class="fas fa-trash-alt text-danger" style="font-size: 3.5rem; opacity: 0.25;"></i>
-                    <h5 class="mt-3 mb-2">Are you sure?</h5>
-                    <p class="text-muted mb-4">This stock update will be permanently deleted.</p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="/mobile.js"></script>
-    <script>
-        let deleteForm = null;
-
-        function confirmDelete(form) {
-            deleteForm = form;
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
-            return false;
-        }
-
-        document.getElementById('confirmDelete').addEventListener('click', function() {
-            if (deleteForm) {
-                deleteForm.submit();
+        safeStockUpdates.forEach(update => {
+            if(update.date) {
+                const updateDate = new Date(update.date);
+                if(updateDate >= today) todayCount++;
+                if(updateDate >= weekAgo) weekCount++;
+                if(updateDate >= monthAgo) monthCount++;
             }
         });
+    }
+%>
 
-        function editStock(button) {
-            const form = document.getElementById('editForm');
-            form.action = '/admin/stock/update/' + button.dataset.id;
+    <!DOCTYPE html>
+    <html lang="en">
 
-            document.getElementById('editProductId').value = button.dataset.productId || '';
-            document.getElementById('editQuantityAdded').value = button.dataset.quantity || '';
-            document.getElementById('editNotes').value = button.dataset.notes || '';
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stock Management - Belife Home Care</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/mobile.css">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-            new bootstrap.Modal(document.getElementById('editModal')).show();
-        }
-    </script>
-</body>
-</html>
+            body {
+                font-family: 'Inter', sans-serif;
+                background: #f5f7fa;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 260px;
+                height: 100vh;
+                background: #1e293b;
+                padding: 20px 0;
+                z-index: 1000;
+                overflow-y: auto;
+            }
+
+            .sidebar-brand {
+                padding: 0 20px 30px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar-brand h4 {
+                color: #fff;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .sidebar-menu {
+                list-style: none;
+                padding: 20px 0;
+            }
+
+            .sidebar-menu li a {
+                display: flex;
+                align-items: center;
+                padding: 12px 20px;
+                color: #94a3b8;
+                text-decoration: none;
+                transition: all 0.3s;
+            }
+
+            .sidebar-menu li a:hover,
+            .sidebar-menu li a.active {
+                background: rgba(59, 130, 246, 0.15);
+                color: #3b82f6;
+            }
+
+            .sidebar-menu li a i {
+                width: 20px;
+                margin-right: 12px;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                padding: 30px;
+                padding-top: 20px;
+            }
+
+            .top-bar {
+                background: #ffffff;
+                padding: 24px 30px;
+                border-radius: 20px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(226, 232, 240, 0.6);
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .top-bar h2 {
+                margin: 0;
+                color: #0f172a;
+                font-weight: 800;
+                letter-spacing: -0.5px;
+                font-size: 1.5rem;
+            }
+
+            .top-bar-actions {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .top-bar .btn {
+                padding: 10px 24px;
+                border-radius: 50rem;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                border: none;
+            }
+
+            .top-bar .btn:hover {
+                transform: translateY(-2px);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                border: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: 500;
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+                color: #ffffff;
+                box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+            }
+
+            .top-bar .btn-success {
+                background: #ffffff;
+                color: #10b981;
+                border: 1px solid #10b981;
+            }
+
+            .top-bar .btn-success:hover {
+                background: #f0fdf4;
+                color: #059669;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            }
+
+            .card {
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                border: none;
+            }
+
+            .table thead th {
+                background: #f8fafc;
+                color: #475569;
+                font-weight: 600;
+                font-size: 13px;
+                text-transform: uppercase;
+                border: none;
+                padding: 15px;
+            }
+
+            .table tbody td {
+                padding: 15px;
+                color: #334155;
+                vertical-align: middle;
+                border-color: #f1f5f9;
+            }
+
+            .table tbody tr:hover {
+                background: #f8fafc;
+            }
+
+            .badge {
+                padding: 6px 12px;
+                font-weight: 500;
+                font-size: 12px;
+                border-radius: 6px;
+            }
+
+            .modal-content {
+                border-radius: 12px;
+                border: none;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            }
+
+            .modal-header {
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .form-label {
+                font-weight: 500;
+                color: #475569;
+                margin-bottom: 8px;
+            }
+
+            .form-control,
+            .form-select {
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            }
+
+            .table-responsive {
+                max-height: 500px;
+                overflow-y: auto;
+            }
+
+            .filter-section {
+                background: #fff;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-box {
+                position: relative;
+            }
+
+            .search-box input {
+                padding-left: 40px;
+            }
+
+            .search-box i {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #94a3b8;
+            }
+
+            .filter-btn-group {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-bottom: 15px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                border: 2px solid #e2e8f0;
+                background: #fff;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                color: #64748b;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .filter-btn:hover {
+                border-color: #3b82f6;
+                color: #3b82f6;
+                background: rgba(59, 130, 246, 0.05);
+            }
+
+            .filter-btn.active {
+                background: #3b82f6;
+                border-color: #3b82f6;
+                color: #fff;
+            }
+
+            @media (max-width: 992px) {
+                .sidebar {
+                    width: 220px;
+                }
+
+                .main-content {
+                    margin-left: 220px;
+                    padding: 20px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s ease;
+                }
+
+                .sidebar.show {
+                    transform: translateX(0);
+                }
+
+                .main-content {
+                    margin-left: 0;
+                    padding: 10px;
+                    padding-top: 10px !important;
+                }
+
+                .top-bar {
+                    position: static;
+                    margin-top: 0;
+                    padding: 16px;
+                    margin-bottom: 20px;
+                    border-radius: 16px;
+                    z-index: 10;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 12px;
+                }
+
+                .top-bar h2 {
+                    font-size: 1.35rem;
+                    text-align: center;
+                }
+
+                .top-bar-actions {
+                    width: 100%;
+                    display: flex;
+                    gap: 8px;
+                }
+
+                .top-bar-actions .btn {
+                    flex: 1;
+                    padding: 12px 10px;
+                    white-space: nowrap;
+                    font-size: 0.8rem;
+                    margin: 0 !important;
+                }
+
+                .mobile-menu-btn {
+                    display: block !important;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <h4><i class="fas fa-home me-2"></i>Belife Home Care</h4>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="/admin/products"><i class="fas fa-box"></i> Products</a></li>
+                <li><a href="/admin/users"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="/admin/stock" class="active"><i class="fas fa-warehouse"></i> Stock</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <h2>Stock Management</h2>
+                <div class="top-bar-actions">
+                    <button class="btn btn-success" onclick="showDateModal()"><i class="fas fa-download"></i> Export
+                        Excel</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"
+                        aria-label="Add new stock entry">
+                        <i class="fas fa-plus"></i> Add Stock
+                    </button>
+                </div>
+            </div>
+            <style>
+                .hover-lift { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+                .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important; }
+            </style>
+            
+            <div class="filter-section card shadow-sm border-0 rounded-4 mb-4 p-4 bg-light">
+                <div class="row g-4 align-items-center">
+                    <div class="col-12">
+                        <label class="form-label text-muted fw-bold mb-2 text-uppercase d-flex align-items-center"
+                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            <i class="fas fa-calendar-alt me-2 text-primary fs-6"></i>Date Range Filter
+                        </label>
+                        <div class="d-flex flex-wrap gap-3 mt-2">
+                            <button class="btn btn-sm btn-outline-primary active position-relative" data-date="" onclick="setDateFilter(this)">
+                                <i class="fas fa-calendar-alt me-1"></i>All Time
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.6em;"><%= safeStockUpdates.length %></span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary position-relative" data-date="today" onclick="setDateFilter(this)">
+                                <i class="fas fa-sun me-1"></i>Today
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.6em;"><%= todayCount %></span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary position-relative" data-date="week" onclick="setDateFilter(this)">
+                                <i class="fas fa-calendar-week me-1"></i>This Week
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.6em;"><%= weekCount %></span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary position-relative" data-date="month" onclick="setDateFilter(this)">
+                                <i class="fas fa-calendar me-1"></i>This Month
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.6em;"><%= monthCount %></span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary ms-md-auto" onclick="clearAllFilters()">
+                                <i class="fas fa-eraser me-1"></i>Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4 mb-5">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="mb-0 fw-bold">Stock Updates</h5>
+                        <span class="badge bg-primary bg-gradient rounded-pill px-3 py-2 shadow-sm" style="font-size: 0.85rem;">Total: <%= safeStockUpdates.length %></span>
+                    </div>
+                    <div class="search-box position-relative" style="min-width: 300px; max-width: 450px; flex: 1;">
+                        <i class="fas fa-search position-absolute top-50 translate-middle-y text-muted" style="left: 15px;"></i>
+                        <input type="text" id="searchStock" class="form-control hover-lift rounded-pill border shadow-sm ps-5" placeholder="Search by product name or notes..." style="height: 42px; background-color: #f8fafc; border-color: #e2e8f0;">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity Added</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (safeStockUpdates.length===0) { %>
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No stock updates found.</td>
+                                </tr>
+                                <% } else { %>
+                                    <% safeStockUpdates.forEach(update=> { %>
+                                        <tr data-date="<%= update.date || '' %>">
+                                            <td>
+                                                <strong>
+                                                    <%= update.product ? update.product.name : 'Deleted Product' %>
+                                                </strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">+<%= update.quantityAdded %></span>
+                                            </td>
+                                            <td>
+                                                <%= update.date ? new Date(update.date).toLocaleDateString('en-IN', {
+                                                    year: 'numeric' , month: 'short' , day: 'numeric' }) : 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= update.notes || '—' %>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm me-1" type="button"
+                                                    onclick="editStock(this)" data-id="<%= update._id %>"
+                                                    data-product-id="<%= update.product ? update.product._id : '' %>"
+                                                    data-quantity="<%= update.quantityAdded %>"
+                                                    data-notes="<%= update.notes || '' %>" <%=update.product ? ''
+                                                    : 'disabled title="Cannot edit — product deleted"' %>
+                                                    aria-label="Edit stock entry">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <form action="/admin/stock/delete/<%= update._id %>" method="POST"
+                                                    style="display:inline;" onsubmit="return confirmDelete(this)">
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                        aria-label="Delete stock entry">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Stock Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/admin/stock" method="POST">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addModalLabel">Add New Stock</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Product</label>
+                                <select name="productId" class="form-select" required>
+                                    <option value="">Select Product</option>
+                                    <% safeProducts.forEach(product=> { %>
+                                        <option value="<%= product._id %>">
+                                            <%= product.name %> (Current: <%= product.availableQuantity %>)
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Quantity to Add</label>
+                                <input type="number" name="quantityAdded" class="form-control" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Notes (Optional)</label>
+                                <textarea name="notes" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Stock</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Stock Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="editForm" method="POST">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Edit Stock Entry</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Product</label>
+                                <select name="productId" id="editProductId" class="form-select" required>
+                                    <option value="">Select Product</option>
+                                    <% safeProducts.forEach(product=> { %>
+                                        <option value="<%= product._id %>">
+                                            <%= product.name %> (Current: <%= product.availableQuantity %>)
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Quantity Added</label>
+                                <input type="number" name="quantityAdded" id="editQuantityAdded" class="form-control"
+                                    min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Notes (Optional)</label>
+                                <textarea name="notes" id="editNotes" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-danger" id="deleteModalLabel">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Confirm Delete
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <i class="fas fa-trash-alt text-danger" style="font-size: 3.5rem; opacity: 0.25;"></i>
+                        <h5 class="mt-3 mb-2">Are you sure?</h5>
+                        <p class="text-muted mb-4">This stock update will be permanently deleted.</p>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Selection Modal -->
+        <div class="modal fade" id="dateModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0 bg-primary text-white">
+                        <h5 class="modal-title"><i class="fas fa-calendar-alt me-2"></i>Select Date Range for Export
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">From Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <input type="date" id="startDate" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">To Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <input type="date" id="endDate" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="setQuickDate('today')">
+                                <i class="fas fa-clock me-1"></i>Today
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('week')">
+                                <i class="fas fa-calendar-week me-1"></i>This Week
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="setQuickDate('month')">
+                                <i class="fas fa-calendar me-1"></i>This Month
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="setQuickDate('year')">
+                                <i class="fas fa-calendar-alt me-1"></i>This Year
+                            </button>
+                        </div>
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>Select a date range to export data. Use quick buttons for common ranges.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel me-2"></i>Export Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script src="/mobile.js"></script>
+        <script>
+            let deleteForm = null;
+
+            function confirmDelete(form) {
+                deleteForm = form;
+                new bootstrap.Modal(document.getElementById('deleteModal')).show();
+                return false;
+            }
+
+            document.getElementById('confirmDelete').addEventListener('click', function () {
+                if (deleteForm) {
+                    deleteForm.submit();
+                }
+            });
+
+            function editStock(button) {
+                const form = document.getElementById('editForm');
+                form.action = '/admin/stock/update/' + button.dataset.id;
+
+                document.getElementById('editProductId').value = button.dataset.productId || '';
+                document.getElementById('editQuantityAdded').value = button.dataset.quantity || '';
+                document.getElementById('editNotes').value = button.dataset.notes || '';
+
+                new bootstrap.Modal(document.getElementById('editModal')).show();
+            }
+            function setDateFilter(button) {
+                // Remove active class from all date buttons
+                document.querySelectorAll('[data-date]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Add active class to clicked button
+                button.classList.add('active');
+                // Apply filter
+                filterStock();
+            }
+
+            function clearAllFilters() {
+                // Clear search
+                document.getElementById('searchStock').value = '';
+                // Reset date filter
+                document.querySelectorAll('[data-date]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('[data-date=""]').classList.add('active');
+                // Apply filters
+                filterStock();
+            }
+
+            function filterStock() {
+                const searchTerm = document.getElementById('searchStock').value.toLowerCase().replace(/\s+/g, ' ').trim();
+                const activeBtn = document.querySelector('[data-date].active');
+                const activeDateFilter = activeBtn ? activeBtn.dataset.date : '';
+                const rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    if (row.querySelector('td') && row.querySelector('td').colSpan > 1) return;
+
+                    const productName = row.querySelector('td:first-child').textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+                    const notes = row.querySelector('td:nth-child(4)').textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+                    const dateCell = row.querySelector('td:nth-child(3)').textContent.trim();
+
+                    let matchesSearch = productName.includes(searchTerm) || notes.includes(searchTerm);
+                    let matchesDate = true;
+
+                    if (activeDateFilter && dateCell !== 'N/A') {
+                        const rowDateStr = row.dataset.date || dateCell;
+                        const rowDate = new Date(rowDateStr);
+                        
+                        if (!isNaN(rowDate.getTime())) {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+
+                            switch (activeDateFilter) {
+                                case 'today':
+                                    const orderDay = new Date(rowDate);
+                                    orderDay.setHours(0, 0, 0, 0);
+                                    matchesDate = orderDay.getTime() === today.getTime();
+                                    break;
+                                case 'week':
+                                    const weekAgo = new Date(today);
+                                    weekAgo.setDate(weekAgo.getDate() - 7);
+                                    matchesDate = rowDate >= weekAgo;
+                                    break;
+                                case 'month':
+                                    const monthAgo = new Date(today);
+                                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                                    matchesDate = rowDate >= monthAgo;
+                                    break;
+                            }
+                        }
+                    }
+
+                    if (matchesSearch && matchesDate) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            // Search functionality
+            document.getElementById('searchStock').addEventListener('input', function () {
+                filterStock();
+            });
+            function showDateModal() {
+                // Set today's date as default end date
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('endDate').value = today;
+
+                // Set 30 days ago as default start date
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+
+                new bootstrap.Modal(document.getElementById('dateModal')).show();
+            }
+
+            function setQuickDate(range) {
+                const today = new Date();
+                const startDate = new Date();
+
+                switch (range) {
+                    case 'today':
+                        startDate.setTime(today.getTime());
+                        break;
+                    case 'week':
+                        startDate.setDate(today.getDate() - 7);
+                        break;
+                    case 'month':
+                        startDate.setMonth(today.getMonth() - 1);
+                        break;
+                    case 'year':
+                        startDate.setFullYear(today.getFullYear() - 1);
+                        break;
+                }
+
+                document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+                document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            }
+
+            function exportToExcel() {
+                const startDate = new Date(document.getElementById('startDate').value);
+                const endDate = new Date(document.getElementById('endDate').value);
+
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates');
+                    return;
+                }
+
+                if (startDate > endDate) {
+                    alert('Start date must be before end date');
+                    return;
+                }
+
+                const stockUpdates = safeStockUpdates.filter(update => {
+                    if (!update.date) return false;
+                    const updateDate = new Date(update.date);
+                    return updateDate >= startDate && updateDate <= endDate;
+                });
+
+                if (stockUpdates.length === 0) {
+                    alert('No stock updates found in the selected date range');
+                    return;
+                }
+
+                // Show loading state
+                const exportBtn = event.target;
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+                exportBtn.disabled = true;
+
+                setTimeout(() => {
+                    // Create worksheet data
+                    const wsData = [
+                        ['Product', 'Quantity Added', 'Date', 'Notes']
+                    ];
+
+                    stockUpdates.forEach(update => {
+                        wsData.push([
+                            update.product ? update.product.name : 'Deleted Product',
+                            update.quantityAdded || 0,
+                            update.date ? new Date(update.date).toLocaleDateString('en-IN') : 'N/A',
+                            update.notes || ''
+                        ]);
+                    });
+
+                    // Create workbook and worksheet
+                    const ws = XLSX.utils.aoa_to_sheet(wsData);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, 'Stock Updates');
+
+                    // Generate filename with date range
+                    const startStr = startDate.toLocaleDateString('en-IN').replace(/\//g, '-');
+                    const endStr = endDate.toLocaleDateString('en-IN').replace(/\//g, '-');
+                    const filename = `stock_updates_${startStr}_to_${endStr}.xlsx`;
+
+                    // Download file
+                    XLSX.writeFile(wb, filename);
+
+                    // Reset button and close modal
+                    exportBtn.innerHTML = originalText;
+                    exportBtn.disabled = false;
+                    bootstrap.Modal.getInstance(document.getElementById('dateModal')).hide();
+
+                    // Show success message
+                    showSuccessMessage(`Successfully exported ${stockUpdates.length} stock updates to Excel!`);
+                }, 500);
+            }
+
+            function showSuccessMessage(message) {
+                const toast = document.createElement('div');
+                toast.className = 'position-fixed top-0 end-0 p-3';
+                toast.style.zIndex = '9999';
+                toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+        </script>
+    </body>
+
+    </html>
