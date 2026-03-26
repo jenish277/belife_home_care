@@ -2294,7 +2294,7 @@
                         <div class="mb-3">
                             <label class="form-label">Discount (₹)</label>
                             <input type="number" name="discount" id="discount" class="form-control" min="0" value="0"
-                                step="0.01">
+                                step="0.01" oninput="calculateTotal()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
@@ -2403,7 +2403,12 @@
                         <div class="mb-3">
                             <label class="form-label">Discount (₹)</label>
                             <input type="number" name="discount" id="editDiscount" class="form-control" min="0"
-                                value="0" step="0.01">
+                                value="0" step="0.01" oninput="calculateTotal()">
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>Subtotal:</strong> ₹<span id="editSubtotal">0</span><br>
+                            <strong>Discount:</strong> -₹<span id="editDiscountAmount">0</span><br>
+                            <strong>Total:</strong> ₹<span id="editTotalAmount">0</span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
@@ -3054,7 +3059,7 @@
             setTimeout(() => {
                 calculateTotal();
                 updateAvailableProducts('editModal');
-            }, 100);
+            }, 150);
         }
 
         // Add product functionality for create modal
@@ -3289,7 +3294,7 @@
         // Calculate total for order forms
         function calculateTotal() {
             calculateModalTotal('addModal', 'discount', 'subtotal', 'discountAmount', 'totalAmount');
-            calculateModalTotal('editModal', 'editDiscount', null, null, null);
+            calculateModalTotal('editModal', 'editDiscount', 'editSubtotal', 'editDiscountAmount', 'editTotalAmount');
         }
 
         function calculateModalTotal(modalId, discountId, subtotalId, discountAmountId, totalAmountId) {
@@ -3304,14 +3309,15 @@
                 const qtyInput = row.querySelector('.quantity-input');
 
                 if (select && select.value && qtyInput && qtyInput.value) {
-                    const price = parseFloat(select.options[select.selectedIndex].dataset.price) || 0;
+                    // Read price from the selected option by value (works even when select is hidden)
+                    const selectedOpt = select.querySelector(`option[value="${select.value}"]`);
+                    const price = parseFloat(selectedOpt?.dataset.price) || 0;
                     const quantity = parseInt(qtyInput.value) || 0;
 
-                    // The format is "Product Name - ₹Price (Stock: X)"
-                    const optionText = select.options[select.selectedIndex].text;
+                    const optionText = selectedOpt?.text || '';
                     const productName = optionText.split(' - ')[0];
                     const stockMatch = optionText.match(/Stock:\s*(\d+)/i);
-                    const availableStock = stockMatch ? parseInt(stockMatch[1]) : 0;
+                    const availableStock = stockMatch ? parseInt(stockMatch[1]) : 999999;
 
                     // Check stock availability
                     if (quantity > availableStock) {
@@ -3359,8 +3365,7 @@
                 const subtotalSpan = document.getElementById(subtotalId);
                 const discountSpan = document.getElementById(discountAmountId);
                 const totalSpan = document.getElementById(totalAmountId);
-
-                const total = subtotal - discount;
+                const total = Math.max(0, subtotal - discount);
 
                 if (subtotalSpan) subtotalSpan.textContent = subtotal.toFixed(2);
                 if (discountSpan) discountSpan.textContent = discount.toFixed(2);
@@ -3375,11 +3380,12 @@
                 attachProductEventListeners(row);
             });
 
-            // Attach event listeners to discount input
-            const discountInput = document.getElementById('discount');
-            if (discountInput) {
-                discountInput.addEventListener('input', calculateTotal);
-            }
+            // Attach event listeners to discount input with multiple methods
+            ['discount', 'editDiscount'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) input.addEventListener('input', calculateTotal);
+            });
+            calculateTotal();
         });
 
         // Also patch updateAvailableProducts to sync picker disabled visuals

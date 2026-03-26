@@ -51,6 +51,7 @@ exports.addOrder = async (req, res) => {
       user: userId,
       products,
       total: finalTotal,
+      discount: discount,
       orderDate: new Date(),
     });
     await order.save();
